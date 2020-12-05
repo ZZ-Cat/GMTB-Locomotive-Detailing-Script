@@ -3,8 +3,7 @@
 @trigger all
 @autoupdate
 
-if ( duped() || dupefinished() ) { reset() }
-if ( first() ) {
+if ( first() || duped() ) {
 
     #include "plugins/automatic_updates"
     #include "plugins/multiplayer_lock"

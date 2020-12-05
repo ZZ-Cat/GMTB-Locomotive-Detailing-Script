@@ -2,7 +2,7 @@
 @inputs
 @outputs
 @persist DevData:table
-@persist [ E ]:entity
+@persist [ E O ]:entity [ LocomotiveBody FrontBogey RearBogey ]:entity
 @autoupdate
 
 function void appRun() {
@@ -11,7 +11,69 @@ function void appRun() {
     if ( first() ) {
 
         #[  ]#
+        E = entity()
+        O = owner()
+        
+        # Automatic Parenting.
+        if ( !E:parent() ) {
+            
+            local W = E:isWeldedTo()
+            
+            if ( W ) {
+                
+                E:constraintBreak( "weld", W )
+                E:parentTo( W )
+                
+            }
+        }
+        
+        LocomotiveBody = E:parent()
+        
+        runOnLast( 1 )
+        local CE = LocomotiveBody:getConnectedEntities( "axis" )
+        
+        if ( CE[ 1, entity ]:model() == LocomotiveBody:model() ) {
+            
+            CE:remove( 1 )
+            
+        }
 
+        if ( !CE[ 1, entity ] ) {
+            
+            FrontBogey = propSpawn( "models/magtrains/locobogey3.mdl", LocomotiveBody:toWorld( vec( -240, 0, -1.0 ) ), LocomotiveBody:toWorld( ang( 0, 270, 0 ) ), 1 )
+            axis( FrontBogey, FrontBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( FrontBogey:massCenter() + vec( 0, 0, 10 ) ) )
+            noCollide( FrontBogey, LocomotiveBody )
+            FrontBogey:propPhysicalMaterial( "friction_00" )
+            
+        }
+        
+        else {
+            
+            FrontBogey = CE[ 1, entity ]
+            
+        }
+        
+        if ( !CE[ 2, entity ] ) {
+            
+            RearBogey = propSpawn( "models/magtrains/locobogey3.mdl", LocomotiveBody:toWorld( vec( 240, 0, -1.0 ) ), LocomotiveBody:toWorld( ang( 0, 90, 0 ) ), 1 )
+            axis( RearBogey, RearBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( RearBogey:massCenter() + vec( 0, 0, 10 ) ) )
+            noCollide( RearBogey, LocomotiveBody )
+            RearBogey:propPhysicalMaterial( "friction_00" )
+            
+        }
+        
+        else {
+            
+            RearBogey = CE[ 2, entity ]
+            
+        }
+    }
+    
+    if ( last() ) {
+        
+        FrontBogey:propDelete()
+        RearBogey:propDelete()
+        
     }
 }
 
