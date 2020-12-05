@@ -6,8 +6,8 @@
 if ( duped() || dupefinished() ) { reset() }
 if ( first() ) {
 
-    #include "libraries/automatic_updates"
-    #include "libraries/multiplayer_lock"
+    #include "plugins/automatic_updates"
+    #include "plugins/multiplayer_lock"
     #include "e2shared/locomotive details/updatable"
 
     AutoUpdateConfig[ "E2 to Update", string ] = ">e2shared/locomotive details/updatable.txt"
@@ -22,7 +22,7 @@ if ( first() ) {
 
     AutoUpdateConfig[ "Kernel Author", string ] = "Cassie Robinson"
     AutoUpdateConfig[ "Kernel Name", string ] = "Locomotive Details-Main"
-    AutoUpdateConfig[ "Kernel Version", string] = "0.1.0"
+    AutoUpdateConfig[ "Kernel Version", string ] = "0.1.0"
     #[ End of Developer's Data. ]#
 
     E = entity()
