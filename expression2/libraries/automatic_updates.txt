@@ -1,0 +1,220 @@
+@name Automatic Updates
+@persist AutoUpdateConfig:table
+@persist [ PrivateE2AppDirectory PrivateE2UpdateServerURL PrivateE2VersionCheckURL PrivateURLHandle PrivateFileDirectoryHandle PrivateUpdatableBuffer ]:string
+@autoupdate
+
+function void autoUpdateInit() {
+
+    # Load configs.
+    PrivateE2AppDirectory = AutoUpdateConfig[ "E2 to Update", string ]
+    PrivateE2VersionCheckURL = AutoUpdateConfig[ "E2 Version Check URL", string ]
+    PrivateE2UpdateServerURL = AutoUpdateConfig[ "E2 Update Server URL", string ]
+
+    # Set the name of your E2 Script.
+    local E2Name = ""
+    E2Name += AutoUpdateConfig[ "App Author", string ] + "'s\n"
+    E2Name += AutoUpdateConfig[ "App Name", string ]:explode( "-" )[ 1, string ] + "\nVersion "
+    E2Name += AutoUpdateConfig[ "App Version", string ]
+    setName( E2Name )
+
+    # Set execution triggers.
+    runOnHTTP( 1 )
+    runOnFile( 1 )
+
+    # Start initial URL request.
+    PrivateURLHandle = AutoUpdateConfig[ "E2 Version Check URL", string ]
+    timer( "Private Request From URL", 100 )
+
+}
+
+function void autoUpdateRun() {
+
+    #[ Automatic HTTP Request Handler ]#
+    if ( clk( "Private Request From URL" ) ) {
+
+        stoptimer( "Private Request From URL" )
+
+        if ( httpCanRequest() ) {
+
+            # Request HTTP Data from the specified URL.
+            httpRequest( PrivateURLHandle )
+
+        }
+
+        else {
+
+            # Reset the automatic request timer.
+            timer( "Private Request From URL", 3000 )
+
+        }
+    }
+
+    #[ HTTP Callback Handler ]#
+    if ( httpClk() ) {
+
+        local HttpCallbackUrl = httpRequestUrl()
+        local Buffer = httpData()
+
+        # HTTP data is available.
+        if ( Buffer != "" ) {
+
+            switch ( HttpCallbackUrl ) {
+
+                # E2 Version Check Server requested HTTP data.
+                case PrivateE2VersionCheckURL,
+                    local Lines = Buffer:explode( "\n" )
+
+                    local ServerMainAuthor = Lines[ 1, string ]:explode( "Author: " )[ 2, string ]
+                    local ServerMainName =  Lines[ 2, string ]:explode( "Name: " )[ 2, string ]
+                    local ServerMainVersion =  Lines[ 3, string ]:explode( "Version: " )[ 2, string ]
+                    local ServerUpdatableAuthor = Lines[ 5, string ]:explode( "Author: " )[ 2, string ]
+                    local ServerUpdatableName =  Lines[ 6, string ]:explode( "Name: " )[ 2, string ]
+                    local ServerUpdatableVersion =  Lines[ 7, string ]:explode( "Version: " )[ 2, string ]
+
+                    local LocalMainAuthor = AutoUpdateConfig[ "Kernel Author", string ]
+                    local LocalMainName = AutoUpdateConfig[ "Kernel Name", string ]
+                    local LocalMainVersion = AutoUpdateConfig[ "Kernel Version", string ]
+                    local LocalUpdatableAuthor = AutoUpdateConfig[ "App Author", string ]
+                    local LocalUpdatableName = AutoUpdateConfig[ "App Name", string ]
+                    local LocalUpdatableVersion = AutoUpdateConfig[ "App Version", string ]
+
+                    if ( LocalMainAuthor != ServerMainAuthor || LocalUpdatableAuthor != ServerUpdatableAuthor ) {
+
+                        printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": You are violating the software license of this E2 script." )
+                        selfDestruct()
+
+                    }
+
+                    elseif ( ServerMainVersion != LocalMainVersion ) {
+
+                        local LocalMainVersionMajor = LocalMainVersion:explode( "." )[ 1, number ]
+                        local LocalMainVersionMinor = LocalMainVersion:explode( "." )[ 2, number ]
+                        local LocalMainVersionPatch = LocalMainVersion:explode( "." )[ 3, number ]
+
+                        local ServerMainVersionMajor = ServerMainVersion:explode( "." )[ 1, number ]
+                        local ServerMainVersionMinor = ServerMainVersion:explode( "." )[ 2, number ]
+                        local ServerMainVersionPatch = ServerMainVersion:explode( "." )[ 3, number ]
+
+                        # New version of the main script is available.
+                        if ( ServerMainVersionMajor > LocalMainVersionMajor || ServerMainVersionMinor > LocalMainVersionMinor || ServerMainVersionPatch > LocalMainVersionPatch ) {
+
+                            printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": A new version of this E2 script is available." )
+
+                        }
+
+                        # Local version is newer than what's on GitHub. Is this a developer's edition?
+                        elseif ( ServerMainVersionMajor < LocalMainVersionMajor || ServerMainVersionMinor < LocalMainVersionMinor || ServerMainVersionPatch < LocalMainVersionPatch ) {
+
+                            #[ TODO. ]#
+
+                        }
+                    }
+
+                    elseif ( ServerUpdatableVersion != LocalUpdatableVersion ) {
+
+                        local LocalUpdatableVersionMajor = LocalUpdatableVersion:explode( "." )[ 1, number ]
+                        local LocalUpdatableVersionMinor = LocalUpdatableVersion:explode( "." )[ 2, number ]
+                        local LocalUpdatableVersionPatch = LocalUpdatableVersion:explode( "." )[ 3, number ]
+
+                        local ServerUpdatableVersionMajor = ServerUpdatableVersion:explode( "." )[ 1, number ]
+                        local ServerUpdatableVersionMinor = ServerUpdatableVersion:explode( "." )[ 2, number ]
+                        local ServerUpdatableVersionPatch = ServerUpdatableVersion:explode( "." )[ 3, number ]
+
+                        # New version of the updatable script is available.
+                        if ( ServerUpdatableVersionMajor > LocalUpdatableVersionMajor || ServerUpdatableVersionMinor > LocalUpdatableVersionMinor || ServerUpdatableVersionPatch > LocalUpdatableVersionPatch ) {
+
+                            printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Downloading updates. Please wait..." )
+                            PrivateURLHandle = PrivateE2UpdateServerURL
+                            timer( "Private Request From URL", 100 )
+
+                        }
+
+                        # Local version is newer than what's on GitHub. Is this a developer's edition?
+                        elseif ( ServerUpdatableVersionMajor < LocalUpdatableVersionMajor || ServerUpdatableVersionMinor < LocalUpdatableVersionMinor || ServerUpdatableVersionPatch < LocalUpdatableVersionPatch ) {
+
+                            #[ TODO. ]#
+
+                        }
+
+                    }
+                    break
+
+                # E2 Update Server requested HTTP data.
+                case PrivateE2UpdateServerURL,
+                    PrivateUpdatableBuffer = Buffer
+                    PrivateFileDirectoryHandle = PrivateE2AppDirectory
+                    printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Updates downloaded. Please wait while updates are being installed..." )
+                    timer( "Private Load File", 500 )
+                    break
+
+                # An undeclared URL tried to request HTTP data.
+                default,
+                    printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": An invalid URL tried to request HTTP data." )
+                    break
+
+            }
+        }
+
+        # No HTTP data.
+        else {
+
+            printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": No HTTP data was returned. Check your internet connection & try again." )
+
+        }
+    }
+
+    #[ Automatic File Load Handler. ]#
+    if ( clk( "Private Load File" ) ) {
+
+        stoptimer( "Private Load File" )
+
+        if ( fileCanLoad() ) {
+
+            fileLoad( PrivateFileDirectoryHandle )
+
+        }
+
+        else {
+
+            timer( "Private Load File", 10000 )
+
+        }
+    }
+
+    #[ Updatable App Uploaded Callback. ]#
+    if ( fileClk( PrivateE2AppDirectory ) ) {
+
+        if ( fileStatus() == _FILE_OK ) {
+
+            timer( "Private Install App Updates", 200 )
+
+        }
+
+        else {
+
+            printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Updates failed." )
+            exit()
+
+        }
+    }
+
+    if ( clk( "Private Install App Updates" ) ) {
+
+        stoptimer( "Private Install App Updates" )
+
+        if ( fileCanWrite() ) {
+
+            fileWrite( PrivateFileDirectoryHandle, PrivateUpdatableBuffer )
+            setName( "Zap me with the Expression 2 Tool!" )
+            printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Updates installed. It is now safe to reload the E2." )
+            exit()
+
+        }
+
+        else {
+
+            timer( "Private Install App Updates", 200 )
+
+        }
+    }
+}

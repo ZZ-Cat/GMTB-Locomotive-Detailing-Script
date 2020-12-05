@@ -1,0 +1,12 @@
+@name Multiplayer Lock
+@persist
+@autoupdate
+
+function void entity:setLock () {
+
+    Lock = isSinglePlayer() == 1 ? 1 : 0
+    This:propDraw( Lock )
+    This:propNotSolid( !Lock )
+    This:propShadow( Lock )
+
+}

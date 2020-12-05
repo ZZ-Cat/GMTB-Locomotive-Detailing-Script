@@ -1,0 +1,7 @@
+Author: Cassie Robinson
+Name: Locomotive Detailing Script-Main
+Version: 0.1.0
+
+Author: Cassie Robinson
+Name: Locomotive Detailing Script-Updatable
+Version: 0.1.0

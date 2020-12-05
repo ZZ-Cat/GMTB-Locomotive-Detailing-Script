@@ -1,0 +1,22 @@
+@name Locomotive Details/Updatable
+@inputs
+@outputs
+@persist DevData:table
+@persist [ E ]:entity
+@autoupdate
+
+function void appRun() {
+
+    # Replace with your application's code.
+    if ( first() ) {
+
+        #[  ]#
+
+    }
+}
+
+#[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
+function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
+                          DevData[ "App Name", string ] = "Locomotive Details-Updatable"
+                          DevData[ "App Version", string] = "0.1.0" }
+#[ End of Developer's Data. ]#
