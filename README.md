@@ -30,6 +30,10 @@ I need to think of a better name for this project. Until I do, you're stuck with
    Although, currently, only the bogies are automatically spawned in. All of those other things are on the to-do list.
 
 ## What's next:
+ * Automatic Updates for the plugins!
+   Especially as this project grows in both size & complexity. The last thing I want to do is burden you lot with dependency hell.
+   The idea behind this is the same as the Automatic Updates feature of this E2 Script, where the source code is downloaded from my GitHub page to the E2 Shared folder in your Garrys Mod directory; & you zap this E2 in-game to apply the newly installed updates.
+   Perhaps I should put these plugins into a repository all on their own? IDK. One of these days, I might consider it... ONE OF THESE DAYS!
  * Details. Details **GALORE!**
    Over the years, I have been toying with Garrys Mod trains & Expression 2; & I think it's time that I start putting together my own public Expression 2 script, as my personal gift to the Garrys Mod Train Build community - Specifcally, the Flatgrass Construct & Northern Railroad. These folks have been absolutely wonderful in what they do, & I think that this is very well deserved.
    Starting off with "Ol' Reliable" - the GM-EMD SD40, I will implement as much detail into each locomotive as I possibly can, based on all of the resources that are available to me.
@@ -64,6 +68,9 @@ I need to think of a better name for this project. Until I do, you're stuck with
 
 ## Quick Start Guide:
  TBD.
+
+## Duplicating this E2 using Advanced Duplicator 2:
+ Like all of my E2 scripts, this is designed to be fully compatible with the latest duplicator tools (EG Advanced Duplicator 2). This E2 script can be duplicated in the exact same way as you would with any other contraption. If you have this E2 saved as a dupe, there is no need to manually update that dupe, as this E2 script is entirely self-updating - IE Every time you spawn your dupe (with this E2 script) in-game, it will be automatically updated with any changes that are made to the source code. This self-updating feature applies to the plugins & the updatable app as well.
 
 ## Software License:
 ![GNU Affero GPL v3](https://www.gnu.org/graphics/agplv3-with-text-162x68.png)
