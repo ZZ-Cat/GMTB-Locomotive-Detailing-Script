@@ -10,8 +10,8 @@ if ( first() || duped() ) {
     #include "e2shared/locomotive details/updatable"
 
     AutoUpdateConfig[ "E2 to Update", string ] = ">e2shared/locomotive details/updatable.txt"
-    AutoUpdateConfig[ "E2 Version Check URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/Master/VERSION.txt"
-    AutoUpdateConfig[ "E2 Update Server URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/Master/expression2/e2shared/Locomotive_Details/updatable.txt"
+    AutoUpdateConfig[ "E2 Version Check URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/master/VERSION.txt"
+    AutoUpdateConfig[ "E2 Update Server URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/master/expression2/e2shared/Locomotive%20Details/updatable.txt"
 
     #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
     appInit()
