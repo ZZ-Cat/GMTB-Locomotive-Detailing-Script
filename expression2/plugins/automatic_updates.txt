@@ -62,6 +62,7 @@ function void autoUpdateRun() {
 
                 # E2 Version Check Server requested HTTP data.
                 case PrivateE2VersionCheckURL,
+                    
                     local Lines = Buffer:explode( "\n" )
 
                     local ServerMainAuthor = Lines[ 1, string ]:explode( "Author: " )[ 2, string ]
@@ -87,13 +88,13 @@ function void autoUpdateRun() {
 
                     elseif ( ServerMainVersion != LocalMainVersion ) {
 
-                        local LocalMainVersionMajor = LocalMainVersion:explode( "." )[ 1, number ]
-                        local LocalMainVersionMinor = LocalMainVersion:explode( "." )[ 2, number ]
-                        local LocalMainVersionPatch = LocalMainVersion:explode( "." )[ 3, number ]
+                        local LocalMainVersionMajor = LocalMainVersion:explode( "." )[ 1, string ]:toNumber()
+                        local LocalMainVersionMinor = LocalMainVersion:explode( "." )[ 2, string ]:toNumber()
+                        local LocalMainVersionPatch = LocalMainVersion:explode( "." )[ 3, string ]:toNumber()
 
-                        local ServerMainVersionMajor = ServerMainVersion:explode( "." )[ 1, number ]
-                        local ServerMainVersionMinor = ServerMainVersion:explode( "." )[ 2, number ]
-                        local ServerMainVersionPatch = ServerMainVersion:explode( "." )[ 3, number ]
+                        local ServerMainVersionMajor = ServerMainVersion:explode( "." )[ 1, string ]:toNumber()
+                        local ServerMainVersionMinor = ServerMainVersion:explode( "." )[ 2, string ]:toNumber()
+                        local ServerMainVersionPatch = ServerMainVersion:explode( "." )[ 3, string ]:toNumber()
 
                         # New version of the main script is available.
                         if ( ServerMainVersionMajor > LocalMainVersionMajor || ServerMainVersionMinor > LocalMainVersionMinor || ServerMainVersionPatch > LocalMainVersionPatch ) {
@@ -105,20 +106,31 @@ function void autoUpdateRun() {
                         # Local version is newer than what's on GitHub. Is this a developer's edition?
                         elseif ( ServerMainVersionMajor < LocalMainVersionMajor || ServerMainVersionMinor < LocalMainVersionMinor || ServerMainVersionPatch < LocalMainVersionPatch ) {
 
-                            #[ TODO. ]#
+                            # Message to the original owner of this E2 Script
+                            if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
 
+                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update this E2 script on GitHub." )
+
+                            }
+
+                            # Message to contributors.
+                            else {
+
+                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Want to contribute? Consider submitting a Pull Request." )
+
+                            }
                         }
                     }
 
                     elseif ( ServerUpdatableVersion != LocalUpdatableVersion ) {
 
-                        local LocalUpdatableVersionMajor = LocalUpdatableVersion:explode( "." )[ 1, number ]
-                        local LocalUpdatableVersionMinor = LocalUpdatableVersion:explode( "." )[ 2, number ]
-                        local LocalUpdatableVersionPatch = LocalUpdatableVersion:explode( "." )[ 3, number ]
+                        local LocalUpdatableVersionMajor = LocalUpdatableVersion:explode( "." )[ 1, string ]:toNumber()
+                        local LocalUpdatableVersionMinor = LocalUpdatableVersion:explode( "." )[ 2, string ]:toNumber()
+                        local LocalUpdatableVersionPatch = LocalUpdatableVersion:explode( "." )[ 3, string ]:toNumber()
 
-                        local ServerUpdatableVersionMajor = ServerUpdatableVersion:explode( "." )[ 1, number ]
-                        local ServerUpdatableVersionMinor = ServerUpdatableVersion:explode( "." )[ 2, number ]
-                        local ServerUpdatableVersionPatch = ServerUpdatableVersion:explode( "." )[ 3, number ]
+                        local ServerUpdatableVersionMajor = ServerUpdatableVersion:explode( "." )[ 1, string ]:toNumber()
+                        local ServerUpdatableVersionMinor = ServerUpdatableVersion:explode( "." )[ 2, string ]:toNumber()
+                        local ServerUpdatableVersionPatch = ServerUpdatableVersion:explode( "." )[ 3, string ]:toNumber()
 
                         # New version of the updatable script is available.
                         if ( ServerUpdatableVersionMajor > LocalUpdatableVersionMajor || ServerUpdatableVersionMinor > LocalUpdatableVersionMinor || ServerUpdatableVersionPatch > LocalUpdatableVersionPatch ) {
@@ -132,10 +144,20 @@ function void autoUpdateRun() {
                         # Local version is newer than what's on GitHub. Is this a developer's edition?
                         elseif ( ServerUpdatableVersionMajor < LocalUpdatableVersionMajor || ServerUpdatableVersionMinor < LocalUpdatableVersionMinor || ServerUpdatableVersionPatch < LocalUpdatableVersionPatch ) {
 
-                            #[ TODO. ]#
+                            # Message to the original owner of this E2 Script
+                            if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
 
+                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update this E2 script on GitHub." )
+
+                            }
+
+                            # Message to contributors.
+                            else {
+
+                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Want to contribute? Consider submitting a Pull Request." )
+
+                            }
                         }
-
                     }
                     break
 
@@ -158,6 +180,7 @@ function void autoUpdateRun() {
         # No HTTP data.
         else {
 
+            # This error has been silenced, for now.
             printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": No HTTP data was returned. Check your internet connection & try again." )
 
         }

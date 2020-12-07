@@ -69,7 +69,7 @@ function void appRun() {
         }
     }
     
-    if ( last() ) {
+    if ( last() || removing() ) {
         
         FrontBogey:propDelete()
         RearBogey:propDelete()
@@ -80,5 +80,5 @@ function void appRun() {
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string] = "0.1.0" }
+                          DevData[ "App Version", string] = "0.1.1" }
 #[ End of Developer's Data. ]#

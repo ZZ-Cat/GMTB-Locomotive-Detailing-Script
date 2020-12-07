@@ -1,5 +1,5 @@
 @name Locomotive Details/Main
-@model
+@model models/beer/wiremod/gate_e2_nano.mdl
 @trigger all
 @autoupdate
 
@@ -21,7 +21,7 @@ if ( first() || duped() ) {
 
     AutoUpdateConfig[ "Kernel Author", string ] = "Cassie Robinson"
     AutoUpdateConfig[ "Kernel Name", string ] = "Locomotive Details-Main"
-    AutoUpdateConfig[ "Kernel Version", string ] = "0.1.0"
+    AutoUpdateConfig[ "Kernel Version", string ] = "0.1.1"
     #[ End of Developer's Data. ]#
 
     E = entity()
