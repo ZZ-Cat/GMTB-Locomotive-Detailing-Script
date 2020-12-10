@@ -2,83 +2,251 @@
 @inputs
 @outputs
 @persist DevData:table
-@persist [ E O ]:entity [ LocomotiveBody FrontBogey RearBogey ]:entity
+@persist [ E O ]:entity [ LocomotiveBody FrontBogey RearBogey ]:entity [ BogeyComponents ]:table
+@persist [ H ]:number [ HoloEntity ]:entity
 @autoupdate
 
 function void appRun() {
 
-    # Replace with your application's code.
-    if ( first() ) {
+    #[ Application init. ]#
+    if ( first() || dupefinished() ) {
+        
+        function void appAssert( Condition, Message:string ) {
+            
+            if( Condition == 0 ) {
 
-        #[  ]#
+                stopAllTimers()
+                runOnTick( 0 )
+                printColor( vec( 255, 0, 0 ), "[ASSERT]", vec( 255 ), ": " + Message )
+                exit()
+
+            }
+        }
+
+        # Entity Data.
         E = entity()
         O = owner()
         
-        # Automatic Parenting.
+        #[ Automatic Parenting. ]#
         if ( !E:parent() ) {
             
+            # Get the entity that this E2 is welded to.
             local W = E:isWeldedTo()
             
+            # Check for validity.
             if ( W ) {
                 
+                # Remove weld constraint & parent the E2 to the entity that you've attached it to.
                 E:constraintBreak( "weld", W )
                 E:parentTo( W )
                 
             }
         }
         
+        # The parented entity should be the locomotive's body.
         LocomotiveBody = E:parent()
-        
+
+        # Run this script when the E2 gets deleted. This will clean up any resources that were allocated by this script.
         runOnLast( 1 )
+        
+        #[ Automatic Bogey Spawning. ]#
         local CE = LocomotiveBody:getConnectedEntities( "axis" )
         
+        # Remove the locomotive's body from the list of constrained entities.
         if ( CE[ 1, entity ]:model() == LocomotiveBody:model() ) {
             
             CE:remove( 1 )
             
         }
 
+        # No front bogey exists.
         if ( !CE[ 1, entity ] ) {
             
+            # Spawn in the front bogey & apply constraint data to it.
             FrontBogey = propSpawn( "models/magtrains/locobogey3.mdl", LocomotiveBody:toWorld( vec( -240, 0, -1.0 ) ), LocomotiveBody:toWorld( ang( 0, 270, 0 ) ), 1 )
             axis( FrontBogey, FrontBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( FrontBogey:massCenter() + vec( 0, 0, 10 ) ) )
             noCollide( FrontBogey, LocomotiveBody )
             FrontBogey:propPhysicalMaterial( "friction_00" )
             
         }
-        
+
+        # Front Bogey already exists.
         else {
-            
+
+            # Initialize.
             FrontBogey = CE[ 1, entity ]
             
         }
-        
+
+        # No rear bogey exists.
         if ( !CE[ 2, entity ] ) {
-            
+
+            # Spawn in the rear bogey & apply constraint data to it.
             RearBogey = propSpawn( "models/magtrains/locobogey3.mdl", LocomotiveBody:toWorld( vec( 240, 0, -1.0 ) ), LocomotiveBody:toWorld( ang( 0, 90, 0 ) ), 1 )
             axis( RearBogey, RearBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( RearBogey:massCenter() + vec( 0, 0, 10 ) ) )
             noCollide( RearBogey, LocomotiveBody )
             RearBogey:propPhysicalMaterial( "friction_00" )
             
         }
-        
+
+        # Rear bogey already exists.
         else {
-            
+
+            # Initialize.
             RearBogey = CE[ 2, entity ]
             
         }
+
+        # Tick Clock is used to spawn holograms.
+        runOnTick( 1 )
+
     }
     
-    if ( last() || removing() ) {
-        
+    #[ Hologram Spawn Handler. ]#
+    if( tickClk() ) {
+
+        #[ Assert when the hologram spawn limit has been reached. ]#
+        appAssert( holoCanCreate(), "Hologram spawn limit reached." )
+
+        #[ Cue hologram madness... ]#
+        H++
+        local Parent = noentity()
+        switch( H ) {
+
+            # Front Bogey Base Model.
+            case 1,
+                FrontBogey:propDraw( 0 )
+                HoloEntity = holoCreate( H, FrontBogey:toWorld( vec() ), vec( 1 ), FrontBogey:toWorld( ang() ), vec4( 255 ), "models/magtrains/locobogey3.mdl" )
+                holoParent( H, FrontBogey )
+                holoShadow( H, 0 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/invisible" )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_black" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/enamel_cast_white" )
+                HoloEntity:setBodygroup( 2, 1 )
+                BogeyComponents[ "Front Bogey - Base", entity ] = HoloEntity
+                break
+            
+            # Front Bogey - Forward Traction Motor Assembly.
+            case 2,
+                Parent = BogeyComponents[ "Front Bogey - Base", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, -84, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 0, 1 )
+                BogeyComponents[ "Front Bogey - Forward Traction Motor Assembly", entity ] = HoloEntity
+                break
+
+            # Front Bogey - Forward Axle.
+            case 3,
+                Parent = BogeyComponents[ "Front Bogey - Forward Traction Motor Assembly", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 1 )
+                BogeyComponents[ "Front Bogey - Forward Axle", entity ] = HoloEntity
+                break
+
+            # Front Bogey - Forward Axle - Left Bearing Cap.
+            case 4,
+                Parent = BogeyComponents[ "Front Bogey - Forward Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.15, 1.15 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 2 )
+                break
+
+            # Front Bogey - Forward Axle - Right Bearing Cap.
+            case 5,
+                Parent = BogeyComponents[ "Front Bogey - Forward Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.15, 1.15 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 2 )
+                break
+
+            # Front Bogey - Middle Traction Motor Assembly.
+            case 6,
+                Parent = BogeyComponents[ "Front Bogey - Base", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 0, 1 )
+                BogeyComponents[ "Front Bogey - Middle Traction Motor Assembly", entity ] = HoloEntity
+                break
+
+            # Front Bogey - Middle Axle.
+            case 7,
+                Parent = BogeyComponents[ "Front Bogey - Middle Traction Motor Assembly", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 1 )
+                BogeyComponents[ "Front Bogey - Middle Axle", entity ] = HoloEntity
+                break
+
+            # Front Bogey - Middle Axle - Left Bearing Cap.
+            case 8,
+                Parent = BogeyComponents[ "Front Bogey - Middle Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.15, 1.15 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 2 )
+                break
+
+            # Front Bogey - Middle Axle - Right Bearing Cap.
+            case 9,
+                Parent = BogeyComponents[ "Front Bogey - Middle Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.15, 1.15 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 2 )
+                break
+
+            # Front Bogey - Rear Traction Motor Assembly.
+            case 10,
+                Parent = BogeyComponents[ "Front Bogey - Base", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 84, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 0, 1 )
+                BogeyComponents[ "Front Bogey - Rear Traction Motor Assembly", entity ] = HoloEntity
+                break
+
+            # Front Bogey - Rear Axle.
+            case 11,
+                Parent = BogeyComponents[ "Front Bogey - Rear Traction Motor Assembly", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 1 )
+                BogeyComponents[ "Front Bogey - Rear Axle", entity ] = HoloEntity
+                break
+
+            # Front Bogey - Rear Axle - Left Bearing Cap.
+            case 12,
+                Parent = BogeyComponents[ "Front Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.15, 1.15 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 2 )
+                break
+
+            # Front Bogey - Rear Axle - Right Bearing Cap.
+            case 13,
+                Parent = BogeyComponents[ "Front Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.15, 1.15 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setBodygroup( 1, 2 )
+                break
+            
+            default,
+                runOnTick( 0 )
+                break
+
+        }
+    }
+
+    #[ Resource Cleanup. ]#
+    if ( #[ last() || ]# removing() ) {
+
+        # Delete previously spawned entities.
         FrontBogey:propDelete()
         RearBogey:propDelete()
-        
+
     }
 }
 
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string] = "0.1.1" }
+                          DevData[ "App Version", string] = "0.2.0" }
 #[ End of Developer's Data. ]#
