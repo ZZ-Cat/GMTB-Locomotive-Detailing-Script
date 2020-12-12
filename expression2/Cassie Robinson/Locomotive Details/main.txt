@@ -17,11 +17,11 @@ if ( first() || duped() ) {
     appInit()
     AutoUpdateConfig[ "App Author", string ] = DevData[ "App Author", string ]
     AutoUpdateConfig[ "App Name", string ] = DevData[ "App Name", string ]
-    AutoUpdateConfig[ "App Version", string ] = DevData[ "App Version", string]
+    AutoUpdateConfig[ "App Version", string ] = DevData[ "App Version", string ]
 
     AutoUpdateConfig[ "Kernel Author", string ] = "Cassie Robinson"
     AutoUpdateConfig[ "Kernel Name", string ] = "Locomotive Details-Main"
-    AutoUpdateConfig[ "Kernel Version", string ] = "0.1.1"
+    AutoUpdateConfig[ "Kernel Version", string ] = "0.1.2"
     #[ End of Developer's Data. ]#
 
     E = entity()

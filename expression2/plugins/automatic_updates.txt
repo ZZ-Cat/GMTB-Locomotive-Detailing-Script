@@ -72,6 +72,8 @@ function void autoUpdateRun() {
                     local ServerUpdatableName =  Lines[ 6, string ]:explode( "Name: " )[ 2, string ]
                     local ServerUpdatableVersion =  Lines[ 7, string ]:explode( "Version: " )[ 2, string ]
 
+                    AutoUpdateConfig[ "Checksum", number ] = Lines[ 9, string]:explode( "Checksum: " )[ 2, string ]:toNumber()
+
                     local LocalMainAuthor = AutoUpdateConfig[ "Kernel Author", string ]
                     local LocalMainName = AutoUpdateConfig[ "Kernel Name", string ]
                     local LocalMainVersion = AutoUpdateConfig[ "Kernel Version", string ]
@@ -99,7 +101,7 @@ function void autoUpdateRun() {
                         # New version of the main script is available.
                         if ( ServerMainVersionMajor > LocalMainVersionMajor || ServerMainVersionMinor > LocalMainVersionMinor || ServerMainVersionPatch > LocalMainVersionPatch ) {
 
-                            printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": A new version of this E2 script is available." )
+                            printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": A new version of the Locomotive Detailing Script is available." )
 
                         }
 
@@ -109,7 +111,8 @@ function void autoUpdateRun() {
                             # Message to the original owner of this E2 Script
                             if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
 
-                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update this E2 script on GitHub." )
+                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update the Main script on GitHub." )
+                                printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
 
                             }
 
@@ -147,7 +150,8 @@ function void autoUpdateRun() {
                             # Message to the original owner of this E2 Script
                             if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
 
-                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update this E2 script on GitHub." )
+                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update the App on GitHub." )
+                                printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
 
                             }
 
@@ -163,10 +167,20 @@ function void autoUpdateRun() {
 
                 # E2 Update Server requested HTTP data.
                 case PrivateE2UpdateServerURL,
-                    PrivateUpdatableBuffer = Buffer
-                    PrivateFileDirectoryHandle = PrivateE2AppDirectory
-                    printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Updates downloaded. Please wait while updates are being installed..." )
-                    timer( "Private Load File", 500 )
+                    if( hash( Buffer ) == AutoUpdateConfig[ "Checksum", number ] ) {
+
+                        PrivateUpdatableBuffer = Buffer
+                        PrivateFileDirectoryHandle = PrivateE2AppDirectory
+                        printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Updates downloaded. Please wait while updates are being installed..." )
+                        timer( "Private Load File", 500 )
+
+                    }
+
+                    else {
+
+                        printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Updates discarded. The source files were corrupt." )
+
+                    }
                     break
 
                 # An undeclared URL tried to request HTTP data.
@@ -181,7 +195,7 @@ function void autoUpdateRun() {
         else {
 
             # This error has been silenced, for now.
-            printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": No HTTP data was returned. Check your internet connection & try again." )
+            printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Unable to download updates. Check your internet connection & try again." )
 
         }
     }

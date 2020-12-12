@@ -10,7 +10,7 @@ function void appRun() {
 
     #[ Application init. ]#
     if ( first() || dupefinished() ) {
-        
+
         function void appAssert( Condition, Message:string ) {
             
             if( Condition == 0 ) {
@@ -196,11 +196,10 @@ function void appRun() {
 
             # Front Bogey - Forward Axle - Left Brake Caliper.
             case 7,
-                #[ TEMPORARILY DISABLED:
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, -60, -27.5 ) ), vec( 1.4, 0.83, 0.83 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
                 if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
-                holoParent( H, Parent ) ]#
+                holoParent( H, Parent )
                 break
 
             # Front Bogey - Forward Axle - Right Bearing Cap.
@@ -327,5 +326,5 @@ function void appRun() {
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string] = "0.2.0" }
+                          DevData[ "App Version", string ] = "0.2.0" }
 #[ End of Developer's Data. ]#

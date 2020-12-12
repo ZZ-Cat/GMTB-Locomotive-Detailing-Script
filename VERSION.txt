@@ -1,7 +1,9 @@
 Author: Cassie Robinson
 Name: Locomotive Detailing Script-Main
-Version: 0.1.1
+Version: 0.1.2
 
 Author: Cassie Robinson
 Name: Locomotive Detailing Script-Updatable
 Version: 0.2.0
+
+Checksum: 0
