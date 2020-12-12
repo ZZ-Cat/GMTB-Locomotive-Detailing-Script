@@ -69,16 +69,51 @@ I need to think of a better name for this project. Until I do, you're stuck with
  'Cause my information is only as good as the resources that are available to me.
 
 ## Requirements:
- TBD.
+ * An active internet connection.
+   - This is only required to setup a valid Steam account; downloading-&-installing of Garrys Mod, Garrys Mod Addons; & automatic updates from this E2's GitHub servers. However, it is not essential to run Garrys Mod. This E2 can run without an internet connection, as it is entirely free from DRM.
+ * [A valid Steam account](https://store.steampowered.com/about/)
+ * [Garrys Mod](https://store.steampowered.com/app/4000/Garrys_Mod/)
+ * [Wiremod](https://steamcommunity.com/sharedfiles/filedetails/?id=160250458)
+ * [Advanced Duplicator 2](https://steamcommunity.com/sharedfiles/filedetails/?id=773402917)
+ * Honestly, just get the FC&N Railroad's Official Add-on Pack for Garrys Mod. It contains everything you need, there.
 
 ## How to obtain & install:
- TBD.
+ 1. Download this repository, by clicking "Download Zip" under the green "Code" button, & save the zip file in an accessible directory.
+ 2. Extract everything from the zip file.
+ 3. **Backup your files before expediting this step.** Copy the 'expression2' folder to this directory -> 'steamapps/common/GarrysMod/garrysmod/data', & overwrite the existing folder(s) & file(s) with the same name(s).
+ 4. Fire up Garrys Mod & start a new sandbox session.
+ 5. In your Expression 2 Editor, click the "Update" button & everything should be there.
+    - This script is divided into three types - "Main", "Updatable" & the "Plugins".
+      The "Main" script is what you will need to have open, when you spawn this script as an E2 Chip in-game. You will also need it for handling updates.
+      The "Updatable" script (as the name suggests) contains the primary functions of the entire E2 script what for bringing your locomotive to life. This is the script that gets the automatic updates, whenever said updates are released. **DO NOT SPAWN THIS SCRIPT IN-GAME!!!**
+      The "Plugins" are actually a part of the "Main" script & contains a folder of two add-on scripts, that are an example of how third party plugins can be used to provide a little extra functionality to the entire E2 script. **DO NOT SPAWN ANY OF THE PLUGINS IN-GAME!!!**
+    - The "Main" script will be located in the "expression2/Cassie Robinson/Locomotive Details" folder; & it is aptly called 'main.txt'.
+    - The "Updatable" script will be located in the "expression2/e2shared/Locomotive Details" folder; & it is aptly called 'updatable.txt' to avoid confusion with the "Main" script.
 
 ## Quick Start Guide:
- TBD.
+ 1. Spawn in an EMD SD40 (NOT the SD40**-2**) locomotive body blank. You can find it in Grovestreetgman's Propper Trains, in your Add-Ons folder.
+ 2. Open up Garrys Mod's Expression 2 Editor & navigate to the 'main.txt' file, that's in the Locomotive Details sub-folder of "expression2/Cassie Robinson"; & open the file within the Expression 2 Editor. This is the "Main" script.
+ 3. Close the editor & spawn the "Main" script on the locomotive's body - preferably somewhere inconspicuous.
+ 4. It's as easy as that. You're done here. "Keep your dick in a vice." --Arduino versus Evil
+
+## A Note on Updates:
+ While this script is designed to ease the burden of "Dependency Hell", by automating the update processes as much as Expression 2 will allow. Here are a few steps to help you along the way...
+ * For the "Updatable" script:
+    1. Follow the chat prompts.
+    2. When instructed to "Zap" the E2 chip with your tool gun, you **need** to have the "Main" script open in your Expression 2 editor.
+    3. "Zap" the E2 chip by left-clicking on the chip, with Expression 2 loaded onto your tool gun.
+        If you "Reload" the chip, **the newly downloaded updates will not be installed** & the E2 script will repeat the automatic update process.
+ * For the "Main" script & the "plugins":
+    1. This process, unfortunately, is a little more complex than the automatic process above. If Expression 2 had a way of automating this process, I would have done it already.
+    2. When prompted about a new update, download the source code from this repository.
+    3. Once you've extracted the files, copy both the 'Cassie Robinson' & 'plugins' folders from '[wherever you extracted this]/expression2' to
+        this directory -> 'steamapps/common/GarrysMod/garrysmod/data/expression2'.
+    4. Fire up Garrys Mod & start up a new session.
+    5. Open up the Expression 2 Editor & click the "Update" button.
+    6. The new updates should have been installed, by now. You can verify this by spawning in either your previously saved dupe (with this E2 in-tow), or follow the steps outline in the "Quick Start Guide". You'll know when the updates are successful, because you won't be bugged by the script about new updates... until the next updates get released.
 
 ## Duplicating this E2 using Advanced Duplicator 2:
- Like all of my E2 scripts, this is designed to be fully compatible with the latest duplicator tools (EG Advanced Duplicator 2). This E2 script can be duplicated in the exact same way as you would with any other contraption. If you have this E2 saved as a dupe, there is no need to manually update that dupe, as this E2 script is entirely self-updating - IE Every time you spawn your dupe (with this E2 script) in-game, it will be automatically updated with any changes that are made to the source code. This self-updating feature applies to the plugins & the updatable app as well.
+ Like all of my E2 scripts, this is designed to be fully compatible with the latest duplicator tools (EG Advanced Duplicator 2). This E2 script can be duplicated in the exact same way as you would with any other contraption. Better yet, if you have this E2 saved as a dupe, you do NOT need to manually update the dupe, whenever updates to this E2 is released. The automations in this script take care of that headache for you.
 
 ## Software License:
 ![GNU Affero GPL v3](https://www.gnu.org/graphics/agplv3-with-text-162x68.png)
