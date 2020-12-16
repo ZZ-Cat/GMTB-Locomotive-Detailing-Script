@@ -100,6 +100,14 @@ function void appRun() {
 
         }
 
+        # Automatically enable the 'wire_holograms_modelany' convar, if it's been previously disabled.
+        if( holoModelAny() == 0 ) {
+
+            # Assert if the convar has been white-listed.
+            appAssert( concmd( "wire_holograms_modelany 1" ), "Holograms are disabled on this server." )
+
+        }
+
         # Tick Clock is used to spawn holograms.
         runOnTick( 1 )
 
@@ -109,13 +117,10 @@ function void appRun() {
     if( tickClk() ) {
 
         #[ Assert when the hologram spawn limit has been reached. ]#
-        if( !holoCanCreate() ) {
+        appAssert( holoAmount() < holoMaxAmount(), "Hologram spawn limit reached." )
 
-            appAssert( H < 10000, "Hologram spawn limit reached." )
-
-            exit()
-
-        }
+        # This provides a safety buffer between bursts of holograms being spawned.
+        if( !holoCanCreate() || !holoModelAny() ) { exit() }
 
         #[ Cue hologram madness... ]#
         H++
