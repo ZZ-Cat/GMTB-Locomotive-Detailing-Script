@@ -112,7 +112,7 @@ function void autoUpdateRun() {
                             if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
 
                                 printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update the Main script on GitHub." )
-                                printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
+                               #printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
 
                             }
 
@@ -151,7 +151,7 @@ function void autoUpdateRun() {
                             if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
 
                                 printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update the App on GitHub." )
-                                printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
+                               #printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
 
                             }
 
@@ -178,9 +178,18 @@ function void autoUpdateRun() {
 
                     else {
 
-                        printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Updates discarded. The source files were corrupt." )
-                        print( "Server sum: " + AutoUpdateConfig[ "Checksum", number ] )
-                        print( "Buffer sum: " + hash( Buffer ) )
+                        if( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
+
+                            printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update the checksum in VERSION.txt." )
+                            printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash( Buffer ) )
+
+                        }
+                        
+                        else {
+
+                            printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Updates discarded. The source files were corrupt." )
+
+                        }
 
                     }
                     break
