@@ -62,7 +62,7 @@ function void autoUpdateRun() {
 
                 # E2 Version Check Server requested HTTP data.
                 case PrivateE2VersionCheckURL,
-                    
+
                     local Lines = Buffer:explode( "\n" )
 
                     local ServerMainAuthor = Lines[ 1, string ]:explode( "Author: " )[ 2, string ]
