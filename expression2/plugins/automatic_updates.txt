@@ -179,6 +179,8 @@ function void autoUpdateRun() {
                     else {
 
                         printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Updates discarded. The source files were corrupt." )
+                        print( "Server sum: " + AutoUpdateConfig[ "Checksum", number ] )
+                        print( "Buffer sum: " + hash( Buffer ) )
 
                     }
                     break
@@ -194,7 +196,6 @@ function void autoUpdateRun() {
         # No HTTP data.
         else {
 
-            # This error has been silenced, for now.
             printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Unable to download updates. Check your internet connection & try again." )
 
         }

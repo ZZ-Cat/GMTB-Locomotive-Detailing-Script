@@ -12,7 +12,7 @@ function void appRun() {
     if ( first() || dupefinished() ) {
 
         BogeyColor = vec4( 255 )
-        BogeyMaterial = "models/proppertextures/enamel_cast_white"
+        BogeyMaterial = "models/proppertextures/enamel_cast_black"
 
         function void appAssert( Condition, Message:string ) {
 
