@@ -81,6 +81,7 @@ function void autoUpdateRun() {
                     local LocalUpdatableName = AutoUpdateConfig[ "App Name", string ]
                     local LocalUpdatableVersion = AutoUpdateConfig[ "App Version", string ]
 
+                    #[ TEMPORARILY DISABLED, PENDING DEBUGGING!
                     if ( LocalMainAuthor != ServerMainAuthor || LocalUpdatableAuthor != ServerUpdatableAuthor ) {
 
                         printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": You are violating the software license of this E2 script." )
@@ -88,7 +89,8 @@ function void autoUpdateRun() {
 
                     }
 
-                    elseif ( ServerMainVersion != LocalMainVersion ) {
+                    else]#
+                    if ( ServerMainVersion != LocalMainVersion ) {
 
                         local LocalMainVersionMajor = LocalMainVersion:explode( "." )[ 1, string ]:toNumber()
                         local LocalMainVersionMinor = LocalMainVersion:explode( "." )[ 2, string ]:toNumber()
