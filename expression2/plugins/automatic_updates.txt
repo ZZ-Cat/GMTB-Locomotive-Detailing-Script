@@ -23,7 +23,7 @@ function void autoUpdateInit() {
 
     # Start initial URL request.
     PrivateURLHandle = AutoUpdateConfig[ "E2 Version Check URL", string ]
-    timer( "Private Request From URL", 100 )
+    timer( "Private Request From URL", 3000 )
 
 }
 
