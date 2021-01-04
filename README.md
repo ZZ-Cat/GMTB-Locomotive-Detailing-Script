@@ -118,4 +118,4 @@ I need to think of a better name for this project. Until I do, you're stuck with
 ## Software License:
 ![GNU Affero GPL v3](https://www.gnu.org/graphics/agplv3-with-text-162x68.png)
 
-GMTB Locomotive Detailing Script. Copyright © 2020, Cassandra "ZZ Cat" Robinson.
+GMTB Locomotive Detailing Script. Copyright © 2020-2021, Cassandra "ZZ Cat" Robinson.
