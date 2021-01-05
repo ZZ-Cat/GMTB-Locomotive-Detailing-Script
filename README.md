@@ -11,8 +11,7 @@ I need to think of a better name for this project. Until I do, you're stuck with
 [Cassandra "ZZ Cat" Robinson](https://bit.ly/ZZCatOnFacebook)
 
 ## Description:
- A locomotive detailing script for Garrys Mod Train Build.
- I also need to think of a way better description than that. It's a tad... blunt!
+ Written in Expression 2 & designed for Garrys Mod Train Build servers, this script (as the name suggests) kits your locomotive out with true-to-life levels of detail.
 
 ## Features:
  * App Asserts.
@@ -113,7 +112,7 @@ All my plans for this project are listed here. Whether-or-not I choose to implem
     6. The new updates should have been installed, by now. You can verify this by spawning in either your previously saved dupe (with this E2 in-tow), or follow the steps outline in the "Quick Start Guide". You'll know when the updates are successful, because you won't be bugged by the script about new updates... until the next updates get released.
 
 ## Duplicating this E2 using Advanced Duplicator 2:
- Like all of my E2 scripts, this is designed to be fully compatible with the latest duplicator tools (EG Advanced Duplicator 2). This E2 script can be duplicated in the exact same way as you would with any other contraption. Better yet, if you have this E2 saved as a dupe, you do NOT need to manually update the dupe, whenever updates to this E2 is released. The automations in this script take care of that headache for you.
+ Like all of my E2 scripts, this is designed to be fully compatible with the latest duplicator tools (EG Advanced Duplicator 2). This E2 script can be duplicated in the exact same way as you would with any other contraption. Better yet, if you have this E2 saved as a dupe, you do NOT need to manually update the dupe, whenever updates to this E2 is released. The automations in this script takes care of that headache for you.
 
 ## Software License:
 ![GNU Affero GPL v3](https://www.gnu.org/graphics/agplv3-with-text-162x68.png)
