@@ -15,10 +15,16 @@ I need to think of a better name for this project. Until I do, you're stuck with
  I also need to think of a way better description than that. It's a tad... blunt!
 
 ## Features:
+ * App Asserts.
+   This feature is mainly for those that are somewhat familiar with the inner workings of Expression 2 & other coding languages, in general.
+   When an Assert is called, this halts the E2's execution & prints an error message to the chat. It works in a similar way to standard E2 Errors.
+   The way I have written the Assert, instead of doing a "hard" shut down (like what would happen with a standard E2 Error), it does a "soft" shut down where the E2 bails from the current execution & the Assert function puts the E2 chip into a known "good" state.
+   By rights, the average user of this E2 shouldn't be seeing Asserts in the chat, as it's mainly a developer's tool for debugging & integrity checking.
+   The only Assert you might be most likely to encounter, is the one that is triggered if a hologram fails to spawn. If a cube spawns where a particular hologram should have spawned, chances are either the model that is trying to spawn no longer exists or you don't have that particular support package (EG Workshop Content) installed.
  * Automatic Parenting.
    No need to manually parent this E2 to the locomotive's body. It does this all by itself.
  * Automatic updates.
-   I took my Self-Updatable E2 script, made a plugin version of it & added it to this script.
+   I took my Self-Updatable Kernel E2 script, made a plugin version of it & added it to this script.
    So, whenever I update this project, your versions will get automatically updated too. Yay! =^/,..,^=
  * Multiplayer Lock.
    **NOT TO BE CONFUSED WITH OR CONSTRUED AS DRM!** This is merely an anti-griefing measure, for when you're on a multiplayer train build server.
@@ -30,42 +36,36 @@ I need to think of a better name for this project. Until I do, you're stuck with
    Although, currently, only the bogies are automatically spawned in. All of those other things are on the to-do list.
 
 ## What's next:
- * Automatic Updates for the plugins!
-   Especially as this project grows in both size & complexity. The last thing I want to do is burden you lot with dependency hell.
-   The idea behind this is the same as the Automatic Updates feature of this E2 Script, where the source code is downloaded from my GitHub page to the E2 Shared folder in your Garrys Mod directory; & you zap this E2 in-game to apply the newly installed updates. Easy as!
-   Perhaps I should put these plugins into a repository all on their own? IDK. One of these days, I might consider it... ONE OF THESE DAYS!
- * Details. Details **GALORE!**
-   Over the years, I have been toying with Garrys Mod trains & Expression 2; & I think it's time that I start putting together my own public Expression 2 script, as my personal gift to the Garrys Mod Train Build community - Specifcally, the Flatgrass Construct & Northern Railroad. These folks have been absolutely wonderful in what they do, & I think that this is very well deserved.
-   Starting off with "Ol' Reliable" - the GM-EMD SD40, I will implement as much detail into each locomotive as I possibly can, based on all of the resources that are available to me.
-   The idea with this project is, all you need to do is spawn this E2 on a locomotive body blank & this script will work its magick to bring your locomotive to life.
- * Feature Creep!
-   What's a good project without feature creep? With Fantail, I'm doing everything possible to avoid feature creep. But, for this project... honestly, this one is way less serious (& far less safety conscious) than Fantail. So, this project can afford all the feature creep & bumblefuckery one can throw at it.
-   'Cause, it **is** Garrys Mod, after all. Even if GMTB is competing with (if not, better than) Train Simulator.
- * OpenControl compatible.
-   This one is gonna be a bit of a challenging one, granted the interfaces aren't quite so universal as RLC. So, this one may not get implemented until a lot later on, down the track (pun intended).
- * Prop Spwaning.
-   More specifically, your Engineer's Seat will automatically be spawned in your locomotive's cabin in a similar manner as to how this E2 script spawns in the bogeys.
-   I will also have Smart Entity Discovery search for a parenting gate; automatically parent the seat to the gate; & the gate will automatically be parented to the locomotive's body. This should abstract away a lot of the heavy lifting that's required to get things moving. This is the main idea behind this project, after all.
-   Another thing that will be done is your console(s), gauges & switches. They will all be fully functional & you will be able to interact with them in the ways that you can expect (IE from your Engineer's Seat).
- * RattleCan?
-   Maybe. I ain't too familiar with RattleCan, as I prefer to do my own paint jobs. Apparently, RattleCan is quite the learning curve in & of itself. So, this one is also going into the "I'll cross that bridge when I get there" category.
- * RLC compatible.
-   Yup! You read that right. This E2 script will eventually plug into Magnum MacKivler's Realistic Locomotive Controller, as this script will provide fully functional (as well as decorative) parts to your locomotive in an efficient manner.
- * Smart Entity Discovery - Make it a plugin!
-   By doing this, it will make it even easier to implement Smart Entity Discovery into other projects as well as this one.
-   Currently, Smart Entity Discovery is hard-coded into this E2 script. Because of that, it's not easily reusable in other stuff; & it's quite the headache to re-code every single time.
+OK, now this project is starting to take off in the right direction. Now, I can get serious about what I have planned for this project.
+All my plans for this project are listed here. Whether-or-not I choose to implement each & every item in this list is at my discretion & necessity will take priority.
+ * Locomotive Details - The meat of the sandwich.
+   I am starting things off with the GM-EMD SD40, where I will add as much detail to this body blank as I possibly can, using the resources I have available on hand.
+   I have picked the SD40 as the first locomotive, because there is already an abundance of information about it online & plenty of photographs I can use as references. If I am unable to source any information about a given locomotive or the information that is available is next-to-nothing, I will not add it to this script.
+ * RattleCan 2 Integration.
+   RattleCan 2 comes with RLC Platinum Gamma, so if you've already got RLC, chances are you already have RattleCan - It's in Monkatraz's folder under "Magspack2".
+   Anyways, rather than wiring RattleCan directly to your locomotive base, what you will do is, you wire RattleCan's "Base" input to the Main E2's "Base" output.
+   In a couple of future updates a.) This will be implmented; & b.) I will have figured out a way to automate this wiring process - So, you won't need to worry about it.
+ * RLC Platinum Gamma Integration.
+   The aim here, is to have this script replace the Advanced Entity Marker, the Pod Controller & RLC's Control Stand E2 script; & have the appropriate control stand/desktop/console appear in the locomotive's cabin (along with all necessary details), based on what locomotive you have attached this script's E2 to.
  * WireLink.
-   Instead of having over9000 declared inputs & outputs, this E2 script will make extensive use of the WireLink protocol wherever possible.
+   This simplifies things, by reducing the amount of Inputs & Outputs you need to wire... if you need to do any wiring at all. By the way my project is going, you shouldn't need to do any wiring at all, as all the necessities will be automatically done for you.
 
 ## Errata:
- What's an Alpha release without bugs?
- I'll tell ya what: Those that are more interested in emphasizing quantity & meeting unrealistic deadlines, as opposed to placing emphasis on quality.
- I think me being the only developer what's working on my projects, I have the luxury of having absolute control over the quality of what goes into it.
+ What's an Alpha/Early Access release without bugs?
+ I'll tell ya what:
+ I am the only developer that's working on everything that is in my GitHub repositories. This gives me the luxury of having absolute control over the level of quality that goes into my coding & script work, at the expense of updates taking longer to be pushed out - coupled with the fact that I don't have internet access on most days.
+ With that being said, as much as I strive to avoid it, even my own work isn't entirely 100% immune from pestilence.
 
- With that being said, even my own work isn't entirely 100% immune from pestilence.
+ Currently, as of Kernel Version 0.1.5, I am having some issues with the Automatic Updates plugin falsely flagging license violations.
+ So, I have temporarily disabled that feature until I have fixed it proper-like.
+ There is also the slight chance of the CRC (Cyclic Redundancy Checksum) falsely flagging a corrupted App download. I have left this intact, because a.) It's a semi-rare occurrence; b.) Whenever I update the App, I sometimes forget to update the CRC in the 'VERSION.txt' file while I'm at it. This has a tendency to corrupt App downloads anyways; & c.) I'm still working on the script work for the Automatic Updates plugin. So, expect varying degrees of stability here.
+ This IS an "Alpha/Early Access" status project, after all.
 
- Currently, there aren't any known bugs/issues with the current release, that I can see.
- However, if ya notice something a tad outta kilter, consider opening an issue in this repository about it. Also, provide details about what you did to encounter the bug, so I can trace your steps & reproduce it on my end.
+ You will also note the only detail that's been added to the SD40 so far (as of App Version 0.2.0), is in the bogeys.
+ This will give you an idea of the level of detail that is going into this project, & as time marches forward, more detail will be added to the rest of this locomotive (& other locomotives) in future updates.
+
+ That's about it for what I've encountered as far as bugs/glitches/errata is concerned.
+ However, if ya notice something a outta kilter, consider opening an issue in this repository about it. Also, provide details about what you did to encounter the bug, so I can trace your steps & reproduce it on my end.
  'Cause my information is only as good as the resources that are available to me.
 
 ## Requirements:
