@@ -1,6 +1,6 @@
 @name Locomotive Details/Updatable
 @inputs
-@outputs
+@outputs Base:entity # Wire this to RattleCan's "Base" output.
 @persist DevData:table
 @persist [ E O ]:entity [ LocomotiveBody FrontBogey RearBogey ]:entity [ BogeyComponents ]:table [ BogeyMaterial ]:string [ BogeyColor ]:vector4
 @persist [ H ]:number [ HoloEntity ]:entity
@@ -9,7 +9,7 @@
 function void appRun() {
 
     #[ Application init. ]#
-    if ( first() || dupefinished() ) {
+    if ( first() ) {
 
         BogeyColor = vec4( 255 )
         BogeyMaterial = "models/proppertextures/enamel_cast_black"
@@ -126,14 +126,41 @@ function void appRun() {
         H++
         HoloEntity = noentity()
         local Parent = noentity()
+        local HoloFinished = 0
         switch( H ) {
+
+            #-------------------------------------------------------------- Integration with Monkatraz's RattleCan:
+            case 1,
+                Parent = LocomotiveBody
+                Parent:propDraw( 0 )
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang() ), vec4( 255 ), Parent:model() )
+                holoParent( H, Parent )
+                holoShadow( H, 1 )
+                HoloEntity:setBodygroup( 1, 0 )
+                HoloEntity:setBodygroup( 2, 0 )
+                HoloEntity:setBodygroup( 3, 0 )
+                HoloEntity:setBodygroup( 4, 1 )
+                HoloEntity:setBodygroup( 5, 1 )
+                HoloEntity:setBodygroup( 6, 0 )
+                HoloEntity:setBodygroup( 7, 6 )
+                HoloEntity:setBodygroup( 8, 4 )
+                HoloEntity:setBodygroup( 9, 3 )
+                HoloEntity:setBodygroup( 10, 1 )
+                HoloEntity:setBodygroup( 11, 0 )
+                HoloEntity:setBodygroup( 12, 6 )
+                HoloEntity:setBodygroup( 13, 3 )
+                HoloEntity:setBodygroup( 14, 1 )
+                HoloEntity:setBodygroup( 15, 0 )
+                HoloEntity:setBodygroup( 16, 0 )
+                HoloEntity:setBodygroup( 17, 0 )
+                Base = HoloEntity
+                break
 
             #-------------------------------------------------------------- Front Bogey:
             # Front Bogey Base Model.
-            case 1,
+            case 2,
                 FrontBogey:propDraw( 0 )
                 HoloEntity = holoCreate( H, FrontBogey:toWorld( vec() ), vec( 1 ), FrontBogey:toWorld( ang() ), BogeyColor, "models/magtrains/locobogey3.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, FrontBogey )
                 holoShadow( H, 0 )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/invisible" )
@@ -145,10 +172,9 @@ function void appRun() {
                 break
 
             # Front Bogey Base - Left Side Clip.
-            case 2,
+            case 3,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, FrontBogey:toWorld( vec() ), vec( 1 ), FrontBogey:toWorld( ang() ), vec4( 255 ), "models/magtrains/locobogey3.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, FrontBogey )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_cast_black" )
                 HoloEntity:setSubMaterial( 3, "models/proppertextures/invisible" )
@@ -161,10 +187,9 @@ function void appRun() {
                 break
 
             # Front Bogey Base - Right Side Clip.
-            case 3,
+            case 4,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, FrontBogey:toWorld( vec() ), vec( 1 ), FrontBogey:toWorld( ang() ), vec4( 255 ), "models/magtrains/locobogey3.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, FrontBogey )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_cast_black" )
                 HoloEntity:setSubMaterial( 3, "models/proppertextures/invisible" )
@@ -177,38 +202,54 @@ function void appRun() {
                 break
 
             # Front Bogey - Forward Traction Motor Assembly.
-            case 4,
+            case 5,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, -84, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setBodygroup( 0, 1 )
                 BogeyComponents[ "Front Bogey - Forward Traction Motor Assembly", entity ] = HoloEntity
                 break
 
-            # Front Bogey - Forward Traction Motor - Boona-N Loom Condom
-            case 5,
+            # Front Bogey - Forward Traction Motor - Buna N Loom Condom
+            case 6,
                 Parent = BogeyComponents[ "Front Bogey - Forward Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 16.5, -26, 14.12 ) ), vec( 1, 1.4, 1 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/truck_damper.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Front Bogey - Forward Axle.
-            case 6,
+            case 7,
                 Parent = BogeyComponents[ "Front Bogey - Forward Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang( 90, 0, 0 ) ), vec4( 255 ), "models/sprops/cylinders/size_4/cylinder_9x96.mdl" )
                 holoParent( H, Parent )
-                HoloEntity:setBodygroup( 1, 1 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/wheel" )
                 BogeyComponents[ "Front Bogey - Forward Axle", entity ] = HoloEntity
                 break
 
-            # Front Bogey - Forward Axle - Left Bearing Cap.
-            case 7,
+            # Front Bogey - Forward Axle - Left Wheel.
+            case 8,
                 Parent = BogeyComponents[ "Front Bogey - Forward Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Front Bogey - Forward Axle - Right Wheel.
+            case 9,
+                Parent = BogeyComponents[ "Front Bogey - Forward Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 270, 270 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Front Bogey - Forward Axle - Left Bearing Cap.
+            case 10,
+                Parent = BogeyComponents[ "Front Bogey - Forward Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 90, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -218,10 +259,9 @@ function void appRun() {
                 break
 
             # Front Bogey - Forward Axle - Right Bearing Cap.
-            case 8,
+            case 11,
                 Parent = BogeyComponents[ "Front Bogey - Forward Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -231,38 +271,54 @@ function void appRun() {
                 break
 
             # Front Bogey - Middle Traction Motor Assembly.
-            case 9,
+            case 12,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setBodygroup( 0, 1 )
                 BogeyComponents[ "Front Bogey - Middle Traction Motor Assembly", entity ] = HoloEntity
                 break
 
-            # Front Bogey - Middle Traction Motor - Boona-N Loom Condom
-            case 10,
+            # Front Bogey - Middle Traction Motor - Buna N Loom Condom
+            case 13,
                 Parent = BogeyComponents[ "Front Bogey - Middle Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 16.5, -26, 14.12 ) ), vec( 1, 1.4, 1 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/truck_damper.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Front Bogey - Middle Axle.
-            case 11,
+            case 14,
                 Parent = BogeyComponents[ "Front Bogey - Middle Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang( 90, 0, 0 ) ), vec4( 255 ), "models/sprops/cylinders/size_4/cylinder_9x96.mdl" )
                 holoParent( H, Parent )
-                HoloEntity:setBodygroup( 1, 1 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/wheel" )
                 BogeyComponents[ "Front Bogey - Middle Axle", entity ] = HoloEntity
                 break
 
-            # Front Bogey - Middle Axle - Left Bearing Cap.
-            case 12,
+            # Front Bogey - Middle Axle - Left Wheel.
+            case 15,
                 Parent = BogeyComponents[ "Front Bogey - Middle Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Front Bogey - Middle Axle - Right Wheel.
+            case 16,
+                Parent = BogeyComponents[ "Front Bogey - Middle Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 270, 270 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Front Bogey - Middle Axle - Left Bearing Cap.
+            case 17,
+                Parent = BogeyComponents[ "Front Bogey - Middle Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 90, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -272,10 +328,9 @@ function void appRun() {
                 break
 
             # Front Bogey - Middle Axle - Right Bearing Cap.
-            case 13,
+            case 18,
                 Parent = BogeyComponents[ "Front Bogey - Middle Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -285,38 +340,54 @@ function void appRun() {
                 break
 
             # Front Bogey - Rear Traction Motor Assembly.
-            case 14,
+            case 19,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 84, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setBodygroup( 0, 1 )
                 BogeyComponents[ "Front Bogey - Rear Traction Motor Assembly", entity ] = HoloEntity
                 break
 
-            # Front Bogey - Middle Traction Motor - Boona-N Loom Condom
-            case 15,
+            # Front Bogey - Middle Traction Motor - Buna N Loom Condom
+            case 20,
                 Parent = BogeyComponents[ "Front Bogey - Rear Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 16.5, -26, 14.12 ) ), vec( 1, 1.4, 1 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/truck_damper.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Front Bogey - Rear Axle. <-- This is the axle with the speed counter.
-            case 16,
+            case 21,
                 Parent = BogeyComponents[ "Front Bogey - Rear Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang( 90, 0, 0 ) ), vec4( 255 ), "models/sprops/cylinders/size_4/cylinder_9x96.mdl" )
                 holoParent( H, Parent )
-                HoloEntity:setBodygroup( 1, 1 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/wheel" )
                 BogeyComponents[ "Front Bogey - Rear Axle", entity ] = HoloEntity
                 break
 
-            # Front Bogey - Rear Axle - Left Bearing Cap.
-            case 17,
+            # Front Bogey - Rear Axle - Left Wheel.
+            case 22,
                 Parent = BogeyComponents[ "Front Bogey - Rear Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Front Bogey - Rear Axle - Right Wheel.
+            case 23,
+                Parent = BogeyComponents[ "Front Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 270, 270 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Front Bogey - Rear Axle - Left Bearing Cap.
+            case 24,
+                Parent = BogeyComponents[ "Front Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 90, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -325,31 +396,27 @@ function void appRun() {
                 HoloEntity:setBodygroup( 1, 2 )
                 break
 
-            # Front Bogey - Rear Axle - Right Bearing Cap. <-- This is the bearing cap with the speed counter.
-            case 18,
+            # Front Bogey - Rear Axle - Right Bearing Cap. <-- This is the the speed counter.
+            case 25,
                 Parent = BogeyComponents[ "Front Bogey - Rear Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 2.2 ), Parent:toWorld( ang( 253, 270, 0 ) ), vec4( 255 ), "models/bogies/speedrecorder_hasler.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Front Bogey - Front Left Wheel Brake Assembly - Caliper Arm Mount.
-            case 19,
+            case 26,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, -51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 270, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Front Left Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Front Bogey - Front Left Wheel Brake Assembly - Caliper Arm.
-            case 20,
+            case 27,
                 Parent = BogeyComponents[ "Front Bogey - Front Left Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -358,32 +425,27 @@ function void appRun() {
                 break
 
             # Front Bogey - Front Left Wheel Brake Assembly - Brake Caliper.
-            case 21,
+            case 28,
                 Parent = BogeyComponents[ "Front Bogey - Front Left Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Front Bogey - Front Right Wheel Brake Assembly - Caliper Arm Mount.
-            case 22,
+            case 29,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.5, -51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 270, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Front Right Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Front Bogey - Front Right Wheel Brake Assembly - Caliper Arm.
-            case 23,
+            case 30,
                 Parent = BogeyComponents[ "Front Bogey - Front Right Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -392,32 +454,27 @@ function void appRun() {
                 break
 
             # Front Bogey - Front Right Wheel Brake Assembly - Brake Caliper.
-            case 24,
+            case 31,
                 Parent = BogeyComponents[ "Front Bogey - Front Right Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Front Bogey - Middle Left Wheel Brake Assembly - Caliper Arm Mount.
-            case 25,
+            case 32,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, -32.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Middle Left Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Front Bogey - Middle Left Wheel Brake Assembly - Caliper Arm.
-            case 26,
+            case 33,
                 Parent = BogeyComponents[ "Front Bogey - Middle Left Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -426,32 +483,27 @@ function void appRun() {
                 break
 
             # Front Bogey - Middle Left Wheel Brake Assembly - Brake Caliper.
-            case 27,
+            case 34,
                 Parent = BogeyComponents[ "Front Bogey - Middle Left Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Front Bogey - Middle Right Wheel Brake Assembly - Caliper Arm Mount.
-            case 28,
+            case 35,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.5, -32.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Middle Right Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Front Bogey - Middle Right Wheel Brake Assembly - Caliper Arm.
-            case 29,
+            case 36,
                 Parent = BogeyComponents[ "Front Bogey - Middle Right Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -460,32 +512,27 @@ function void appRun() {
                 break
 
             # Front Bogey - Middle Right Wheel Brake Assembly - Brake Caliper.
-            case 30,
+            case 37,
                 Parent = BogeyComponents[ "Front Bogey - Middle Right Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Front Bogey - Rear Left Wheel Brake Assembly - Caliper Arm Mount.
-            case 31,
+            case 38,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, 51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Rear Left Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Front Bogey - Rear Left Wheel Brake Assembly - Caliper Arm.
-            case 32,
+            case 39,
                 Parent = BogeyComponents[ "Front Bogey - Rear Left Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -494,32 +541,27 @@ function void appRun() {
                 break
 
             # Front Bogey - Rear Left Wheel Brake Assembly - Brake Caliper.
-            case 33,
+            case 40,
                 Parent = BogeyComponents[ "Front Bogey - Rear Left Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Front Bogey - Rear Right Wheel Brake Assembly - Caliper Arm Mount.
-            case 34,
+            case 41,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.5, 51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Rear Right Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Front Bogey - Rear Right Wheel Brake Assembly - Caliper Arm.
-            case 35,
+            case 42,
                 Parent = BogeyComponents[ "Front Bogey - Rear Right Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -528,133 +570,118 @@ function void appRun() {
                 break
 
             # Front Bogey - Rear Right Wheel Brake Assembly - Brake Caliper.
-            case 36,
+            case 43,
                 Parent = BogeyComponents[ "Front Bogey - Rear Right Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Front Bogey - Front Left Brake Cylinder
-            case 37,
+            case 44,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.0, -36.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Front Left Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Front Bogey - Front Left Brake Cylinder Lip
-            case 38,
+            case 45,
                 Parent = BogeyComponents[ "Front Bogey - Front Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Front Bogey - Front Left Brake Pushrod
-            case 39,
+            case 46,
                 Parent = BogeyComponents[ "Front Bogey - Front Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 6 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x36.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             # Front Bogey - Front Right Brake Cylinder
-            case 40,
+            case 47,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.0, -36.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Front Right Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Front Bogey - Front Right Brake Cylinder Lip
-            case 41,
+            case 48,
                 Parent = BogeyComponents[ "Front Bogey - Front Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Front Bogey - Front Right Brake Pushrod
-            case 42,
+            case 49,
                 Parent = BogeyComponents[ "Front Bogey - Front Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 6 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x36.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             # Front Bogey - Rear Left Brake Cylinder
-            case 43,
+            case 50,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.0, 48.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Rear Left Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Front Bogey - Rear Left Brake Cylinder Lip
-            case 44,
+            case 51,
                 Parent = BogeyComponents[ "Front Bogey - Rear Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -3 ) ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Front Bogey - Rear Left Brake Pushrod
-            case 45,
+            case 52,
                 Parent = BogeyComponents[ "Front Bogey - Rear Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -6.5 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             # Front Bogey - Rear Right Brake Cylinder
-            case 46,
+            case 53,
                 Parent = BogeyComponents[ "Front Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.0, 48.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Front Bogey - Rear Right Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Front Bogey - Rear Right Brake Cylinder Lip
-            case 47,
+            case 54,
                 Parent = BogeyComponents[ "Front Bogey - Rear Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -3 ) ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Front Bogey - Rear Right Brake Pushrod
-            case 48,
+            case 55,
                 Parent = BogeyComponents[ "Front Bogey - Rear Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -6.5 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             #-------------------------------------------------------------- Rear Bogey:
             # Rear Bogey Base Model.
-            case 49,
+            case 56,
                 RearBogey:propDraw( 0 )
                 HoloEntity = holoCreate( H, RearBogey:toWorld( vec() ), vec( 1 ), RearBogey:toWorld( ang() ), BogeyColor, "models/magtrains/locobogey3.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, RearBogey )
                 holoShadow( H, 0 )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/invisible" )
@@ -666,10 +693,9 @@ function void appRun() {
                 break
 
             # Rear Bogey Base - Left Side Clip.
-            case 50,
+            case 57,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, RearBogey:toWorld( vec() ), vec( 1 ), RearBogey:toWorld( ang() ), vec4( 255 ), "models/magtrains/locobogey3.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, RearBogey )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_cast_black" )
                 HoloEntity:setSubMaterial( 3, "models/proppertextures/invisible" )
@@ -682,10 +708,9 @@ function void appRun() {
                 break
 
             # Rear Bogey Base - Right Side Clip.
-            case 51,
+            case 58,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, RearBogey:toWorld( vec() ), vec( 1 ), RearBogey:toWorld( ang() ), vec4( 255 ), "models/magtrains/locobogey3.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, RearBogey )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_cast_black" )
                 HoloEntity:setSubMaterial( 3, "models/proppertextures/invisible" )
@@ -698,38 +723,54 @@ function void appRun() {
                 break
 
             # Rear Bogey - Forward Traction Motor Assembly.
-            case 52,
+            case 59,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, -84, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setBodygroup( 0, 1 )
                 BogeyComponents[ "Rear Bogey - Forward Traction Motor Assembly", entity ] = HoloEntity
                 break
 
-            # Rear Bogey - Forward Traction Motor - Boona-N Loom Condom
-            case 53,
+            # Rear Bogey - Forward Traction Motor - Buna N Loom Condom
+            case 60,
                 Parent = BogeyComponents[ "Rear Bogey - Forward Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 16.5, -26, 14.12 ) ), vec( 1, 1.4, 1 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/truck_damper.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Rear Bogey - Forward Axle.
-            case 54,
+            case 61,
                 Parent = BogeyComponents[ "Rear Bogey - Forward Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang( 90, 0, 0 ) ), vec4( 255 ), "models/sprops/cylinders/size_4/cylinder_9x96.mdl" )
                 holoParent( H, Parent )
-                HoloEntity:setBodygroup( 1, 1 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/wheel" )
                 BogeyComponents[ "Rear Bogey - Forward Axle", entity ] = HoloEntity
                 break
 
-            # Rear Bogey - Forward Axle - Left Bearing Cap.
-            case 55,
+            # Rear Bogey - Forward Axle - Left Wheel.
+            case 62,
                 Parent = BogeyComponents[ "Rear Bogey - Forward Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Rear Bogey - Forward Axle - Right Wheel.
+            case 63,
+                Parent = BogeyComponents[ "Rear Bogey - Forward Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 270, 270 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Rear Bogey - Forward Axle - Left Bearing Cap.
+            case 64,
+                Parent = BogeyComponents[ "Rear Bogey - Forward Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 90, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -739,10 +780,9 @@ function void appRun() {
                 break
 
             # Rear Bogey - Forward Axle - Right Bearing Cap.
-            case 56,
+            case 65,
                 Parent = BogeyComponents[ "Rear Bogey - Forward Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -752,38 +792,55 @@ function void appRun() {
                 break
 
             # Rear Bogey - Middle Traction Motor Assembly.
-            case 57,
+            case 66,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setBodygroup( 0, 1 )
                 BogeyComponents[ "Rear Bogey - Middle Traction Motor Assembly", entity ] = HoloEntity
                 break
 
-            # Rear Bogey - Middle Traction Motor - Boona-N Loom Condom
-            case 58,
+            # Rear Bogey - Middle Traction Motor - Buna N Loom Condom
+            case 67,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 16.5, -26, 14.12 ) ), vec( 1, 1.4, 1 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/truck_damper.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                #if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Rear Bogey - Middle Axle.
-            case 59,
+            case 68,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang( 90, 0, 0 ) ), vec4( 255 ), "models/sprops/cylinders/size_4/cylinder_9x96.mdl" )
                 holoParent( H, Parent )
-                HoloEntity:setBodygroup( 1, 1 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/wheel" )
                 BogeyComponents[ "Rear Bogey - Middle Axle", entity ] = HoloEntity
                 break
 
-            # Rear Bogey - Middle Axle - Left Bearing Cap.
-            case 60,
+            # Rear Bogey - Middle Axle - Left Wheel.
+            case 69,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Rear Bogey - Middle Axle - Right Wheel.
+            case 70,
+                Parent = BogeyComponents[ "Rear Bogey - Middle Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 270, 270 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Rear Bogey - Middle Axle - Left Bearing Cap.
+            case 71,
+                Parent = BogeyComponents[ "Rear Bogey - Middle Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 90, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -793,10 +850,9 @@ function void appRun() {
                 break
 
             # Rear Bogey - Middle Axle - Right Bearing Cap.
-            case 61,
+            case 72,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -806,38 +862,54 @@ function void appRun() {
                 break
 
             # Rear Bogey - Rear Traction Motor Assembly.
-            case 62,
+            case 73,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 84, -26 ) ), vec( 1 ), Parent:toWorld( ang( 0, 0, 0 ) ), vec4( 255 ), "models/lazpack/detail/tractionmotorkit.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setBodygroup( 0, 1 )
                 BogeyComponents[ "Rear Bogey - Rear Traction Motor Assembly", entity ] = HoloEntity
                 break
 
-            # Rear Bogey - Middle Traction Motor - Boona-N Loom Condom
-            case 63,
+            # Rear Bogey - Middle Traction Motor - Buna N Loom Condom
+            case 74,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Traction Motor Assembly", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 16.5, -26, 14.12 ) ), vec( 1, 1.4, 1 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/detail/truck_damper.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 break
 
             # Rear Bogey - Rear Axle.
-            case 64,
+            case 75,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.0, 0.91, 0.91 ), Parent:toWorld( ang() ), vec4( 255 ), "models/anytrains/props/locoparts/axle_40_phx.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1 ), Parent:toWorld( ang( 90, 0, 0 ) ), vec4( 255 ), "models/sprops/cylinders/size_4/cylinder_9x96.mdl" )
                 holoParent( H, Parent )
-                HoloEntity:setBodygroup( 1, 1 )
+                HoloEntity:setSubMaterial( 1, "models/proppertextures/wheel" )
                 BogeyComponents[ "Rear Bogey - Rear Axle", entity ] = HoloEntity
                 break
 
-            # Rear Bogey - Rear Axle - Left Bearing Cap.
-            case 65,
+            # Rear Bogey - Rear Axle - Left Wheel.
+            case 76,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Axle", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( -49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 0, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Rear Bogey - Rear Axle - Right Wheel.
+            case 77,
+                Parent = BogeyComponents[ "Rear Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 40 ) ), vec( 1, 1.5, 1 ), Parent:toWorld( ang( 0, 270, 270 ) ), vec4( 255 ), "models/meem/wheel/wheel_36.mdl" )
+                holoParent( H, Parent )
+                HoloEntity:setSubMaterial( 2, "models/proppertextures/metal_shiny" )
+                HoloEntity:setSubMaterial( 3, "models/proppertextures/wheel" )
+                HoloEntity:setBodygroup( 1, 1 )
+                break
+
+            # Rear Bogey - Rear Axle - Left Bearing Cap.
+            case 78,
+                Parent = BogeyComponents[ "Rear Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 90, 180, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -847,10 +919,9 @@ function void appRun() {
                 break
 
             # Rear Bogey - Rear Axle - Right Bearing Cap.
-            case 66,
-                Parent = BogeyComponents[ "Rear Bogey - Rear Traction Motor Assembly", entity ]
-                HoloEntity = holoCreate( H, Parent:toWorld( vec( 49, 0, 0 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang() ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
+            case 79,
+                Parent = BogeyComponents[ "Rear Bogey - Rear Axle", entity ]
+                HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 49 ) ), vec( 1.0, 1.35, 1.35 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/wam98_trainparts/wheel_bearings/timken/timken_ap2.mdl" )
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 HoloEntity:setSubMaterial( 2, "models/proppertextures/enamel_gray" )
@@ -860,22 +931,19 @@ function void appRun() {
                 break
 
             # Rear Bogey - Front Left Wheel Brake Assembly - Caliper Arm Mount.
-            case 67,
+            case 80,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, -51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 270, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Front Left Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Rear Bogey - Front Left Wheel Brake Assembly - Caliper Arm.
-            case 68,
+            case 81,
                 Parent = BogeyComponents[ "Rear Bogey - Front Left Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -884,32 +952,27 @@ function void appRun() {
                 break
 
             # Rear Bogey - Front Left Wheel Brake Assembly - Brake Caliper.
-            case 69,
+            case 82,
                 Parent = BogeyComponents[ "Rear Bogey - Front Left Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Rear Bogey - Front Right Wheel Brake Assembly - Caliper Arm Mount.
-            case 70,
+            case 83,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.5, -51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 270, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Front Right Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Rear Bogey - Front Right Wheel Brake Assembly - Caliper Arm.
-            case 71,
+            case 84,
                 Parent = BogeyComponents[ "Rear Bogey - Front Right Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -918,32 +981,27 @@ function void appRun() {
                 break
 
             # Rear Bogey - Front Right Wheel Brake Assembly - Brake Caliper.
-            case 72,
+            case 85,
                 Parent = BogeyComponents[ "Rear Bogey - Front Right Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Rear Bogey - Middle Left Wheel Brake Assembly - Caliper Arm Mount.
-            case 73,
+            case 86,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, -32.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Middle Left Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Rear Bogey - Middle Left Wheel Brake Assembly - Caliper Arm.
-            case 74,
+            case 87,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Left Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -952,32 +1010,27 @@ function void appRun() {
                 break
 
             # Rear Bogey - Middle Left Wheel Brake Assembly - Brake Caliper.
-            case 75,
+            case 88,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Left Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Rear Bogey - Middle Right Wheel Brake Assembly - Caliper Arm Mount.
-            case 76,
+            case 89,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.5, -32.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Middle Right Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Rear Bogey - Middle Right Wheel Brake Assembly - Caliper Arm.
-            case 77,
+            case 90,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Right Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -986,32 +1039,27 @@ function void appRun() {
                 break
 
             # Rear Bogey - Middle Right Wheel Brake Assembly - Brake Caliper.
-            case 78,
+            case 91,
                 Parent = BogeyComponents[ "Rear Bogey - Middle Right Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Rear Bogey - Rear Left Wheel Brake Assembly - Caliper Arm Mount.
-            case 79,
+            case 92,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.5, 51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Rear Left Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Rear Bogey - Rear Left Wheel Brake Assembly - Caliper Arm.
-            case 80,
+            case 93,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Left Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -1020,32 +1068,27 @@ function void appRun() {
                 break
 
             # Rear Bogey - Rear Left Wheel Brake Assembly - Brake Caliper.
-            case 81,
+            case 94,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Left Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Rear Bogey - Rear Right Wheel Brake Assembly - Caliper Arm Mount.
-            case 82,
+            case 95,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.5, 51.5, -9.25 ) ), vec( 0.25, 0.75, 0.25 ), Parent:toWorld( ang( 0, 90, 0 ) ), vec4( 255 ), "models/sprops/geometry/hdisc_12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Rear Right Wheel Brake Assembly - Caliper Arm Mount", entity ] = HoloEntity
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:right(), 0 ) )
                 break
 
             # Rear Bogey - Rear Right Wheel Brake Assembly - Caliper Arm.
-            case 83,
+            case 96,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Right Wheel Brake Assembly - Caliper Arm Mount", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 28.5, 0, -23.25 ) ), vec( 0.75, 0.75, 1 ), Parent:toWorld( ang( 270, 0, 0 ) ), vec4( 255 ), "models/sprops/geometry/qring_120.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 holoClipEnabled( H, 1, 1 )
@@ -1054,136 +1097,130 @@ function void appRun() {
                 break
 
             # Rear Bogey - Rear Right Wheel Brake Assembly - Brake Caliper.
-            case 84,
+            case 97,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Right Wheel Brake Assembly - Caliper Arm", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 6, 0, 20.8 ) ), vec( 1.4, 0.89, 0.89 ), Parent:toWorld( ang( 0, 90, 90 ) ), vec4( 255 ), "models/anytrains/props/detail/brakeshoe.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
-
                 holoAng( holoIndex( HoloEntity ), HoloEntity:angles():rotateAroundAxis( HoloEntity:forward(), 10 ) )
                 break
 
             # Rear Bogey - Front Left Brake Cylinder
-            case 85,
+            case 98,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.0, -36.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Front Left Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Rear Bogey - Front Left Brake Cylinder Lip
-            case 86,
+            case 99,
                 Parent = BogeyComponents[ "Rear Bogey - Front Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Rear Bogey - Front Left Brake Pushrod
-            case 87,
+            case 100,
                 Parent = BogeyComponents[ "Rear Bogey - Front Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 6 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x36.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             # Rear Bogey - Front Right Brake Cylinder
-            case 88,
+            case 101,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.0, -36.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Front Right Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Rear Bogey - Front Right Brake Cylinder Lip
-            case 89,
+            case 102,
                 Parent = BogeyComponents[ "Rear Bogey - Front Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec() ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Rear Bogey - Front Right Brake Pushrod
-            case 90,
+            case 103,
                 Parent = BogeyComponents[ "Rear Bogey - Front Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, 6 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x36.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             # Rear Bogey - Rear Left Brake Cylinder
-            case 91,
+            case 104,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 41.0, 48.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Rear Left Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Rear Bogey - Rear Left Brake Cylinder Lip
-            case 92,
+            case 105,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -3 ) ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Rear Bogey - Rear Left Brake Pushrod
-            case 93,
+            case 106,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Left Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -6.5 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             # Rear Bogey - Rear Right Brake Cylinder
-            case 94,
+            case 107,
                 Parent = BogeyComponents[ "Rear Bogey - Base", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( -41.0, 48.0, -32.0 ) ), vec( 1.42, 1.42, 1.34 ), Parent:toWorld( ang( 0, 0, 90 ) ), vec4( 255 ), "models/sprops/cylinders/size_3/cylinder_6x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 BogeyComponents[ "Rear Bogey - Rear Right Brake Cylinder", entity ] = HoloEntity
                 break
 
             # Rear Bogey - Rear Right Brake Cylinder Lip
-            case 95,
+            case 108,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -3 ) ), vec( 1.4, 1.4, 1.0 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x6.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/enamel_black" )
                 break
 
             # Rear Bogey - Rear Right Brake Pushrod
-            case 96,
+            case 109,
                 Parent = BogeyComponents[ "Rear Bogey - Rear Right Brake Cylinder", entity ]
                 HoloEntity = holoCreate( H, Parent:toWorld( vec( 0, 0, -6.5 ) ), vec( 1.0, 1.0, 1.04 ), Parent:toWorld( ang() ), vec4( 255 ), "models/sprops/cylinders/size_2/cylinder_3x12.mdl" )
-                if( !HoloEntity ) { appAssert( 0, "Hologram did not spawn." ) }
                 holoParent( H, Parent )
                 HoloEntity:setSubMaterial( 1, "models/proppertextures/metal_shiny" )
                 break
 
             default,
                 runOnTick( 0 )
+                HoloFinished = 1
                 break
 
         }
+
+        # Sanity checks.
+        if( !HoloEntity ) { appAssert( HoloFinished, "Failed to spawn hologram, or no hologram exists at index " + H + "." ) }
+        appAssert( HoloEntity:model() != "models/holograms/cube.mdl", "Hologram model not found at index " + H + "." )
+
     }
 
     #[ Resource Cleanup. ]#
     if ( removing() ) {
+
+        LocomotiveBody:propDraw( 1 )
 
         # Delete previously spawned entities.
         FrontBogey:propDelete()
@@ -1195,5 +1232,5 @@ function void appRun() {
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string ] = "0.2.0" }
+                          DevData[ "App Version", string ] = "0.3.0" }
 #[ End of Developer's Data. ]#
