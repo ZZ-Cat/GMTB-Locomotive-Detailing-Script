@@ -6,4 +6,4 @@ Author: Cassie Robinson
 Name: Locomotive Detailing Script-Updatable
 Version: 0.3.0
 
-Checksum: 3886605605
+Checksum: 3267563864
