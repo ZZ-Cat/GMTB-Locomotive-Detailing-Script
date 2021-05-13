@@ -10,8 +10,14 @@ if ( first() || duped() ) {
     #include "e2shared/locomotive details/updatable"
 
     AutoUpdateConfig[ "E2 to Update", string ] = ">e2shared/locomotive details/updatable.txt"
+
+    # Uncomment these links to use the most stable release.
     AutoUpdateConfig[ "E2 Version Check URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/master/VERSION.txt"
     AutoUpdateConfig[ "E2 Update Server URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/master/expression2/e2shared/Locomotive%20Details/updatable.txt"
+
+    # Uncomment these links to opt into the latest-&-greatest release (Possibly full of bugs, glitches & features that may or may not make it into the final release).
+    #AutoUpdateConfig[ "E2 Version Check URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/bleeding-edge/VERSION.txt"
+    #AutoUpdateConfig[ "E2 Update Server URL", string ] = "https://raw.githubusercontent.com/ZZ-Cat/GMTB-Locomotive-Detailing-Script/bleeding-edge/expression2/e2shared/Locomotive%20Details/updatable.txt"
 
     #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
     appInit()
@@ -21,7 +27,7 @@ if ( first() || duped() ) {
 
     AutoUpdateConfig[ "Kernel Author", string ] = "Cassie Robinson"
     AutoUpdateConfig[ "Kernel Name", string ] = "Locomotive Details-Main"
-    AutoUpdateConfig[ "Kernel Version", string ] = "0.1.6"
+    AutoUpdateConfig[ "Kernel Version", string ] = "1.0.0"
     #[ End of Developer's Data. ]#
 
     E = entity()
