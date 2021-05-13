@@ -344,5 +344,5 @@ function void appRun() {
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string ] = "0.4.0" }
+                          DevData[ "App Version", string ] = "0.4.1" }
 #[ End of Developer's Data. ]#
