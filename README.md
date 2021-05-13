@@ -14,40 +14,18 @@ I need to think of a better name for this project. Until I do, you're stuck with
  Written in Expression 2 & designed for Garrys Mod Train Build servers, this script (as the name suggests) kits your locomotive out with true-to-life levels of detail.
 
 ## Features:
- * App Asserts.
-   This feature is mainly for those that are somewhat familiar with the inner workings of Expression 2 & other coding languages, in general.
-   When an Assert is called, this halts the E2's execution & prints an error message to the chat. It works in a similar way to standard E2 Errors.
-   The way I have written the Assert, instead of doing a "hard" shut down (like what would happen with a standard E2 Error), it does a "soft" shut down where the E2 bails from the current execution & the Assert function puts the E2 chip into a known "good" state.
-   By rights, the average user of this E2 shouldn't be seeing Asserts in the chat, as it's mainly a developer's tool for debugging & integrity checking.
-   The only Assert you might be most likely to encounter, is the one that is triggered if a hologram fails to spawn. If a cube spawns where a particular hologram should have spawned, chances are either the model that is trying to spawn no longer exists or you don't have that particular support package (EG Workshop Content) installed.
  * Automatic Parenting.
-   No need to manually parent this E2 to the locomotive's body. It does this all by itself.
- * Automatic updates.
-   I took my Self-Updatable Kernel E2 script, made a plugin version of it & added it to this script.
-   So, whenever I update this project, your versions will get automatically updated too. Yay! =^/,..,^=
- * Multiplayer Lock.
-   **NOT TO BE CONFUSED WITH OR CONSTRUED AS DRM!** This is merely an anti-griefing measure, for when you're on a multiplayer train build server.
-   Basically, what this does is, it will hide the E2 chip itself & other folk won't be able to dick about with the script work in-server.
-   If they want the source code, they can come & get it from here. THEN, they can get up to their usual scumbaggery... & then, get kicked from the server. lel.
-   Also, this is a plugin. If you want to exclude Multiplayer Lock from your copy of this script, I've made it easy for you to do so. Although, do it at your own risk... & don't come crying to me, when some bumblefuck has dicked about with your script work.
- * Smart Entity Discovery.
-   The E2 automatically detects whatever it is attached to. If the attached prop is a valid (IE supported) locomotive body blank, then this script will run its course. As an added extra, you don't need to manually spawn in things like bogies, seats & consoles. Because this E2 script does all of that heavy lifting for you.
-   Although, currently, only the bogies are automatically spawned in. All of those other things are on the to-do list.
+ * Automatic Updates - When new updates are published to the repository, the E2 will automatically download & install these updates for you.
+ * Multiplayer Lock - Anti-griefing feature. This stops someone from hijacking your locomotive in-game.
+ * Smart Entity Discovery - Bogeys & locomotive crew seats are automatically spawned, when this E2 is attached to a locomotive body.
 
 ## What's next:
 OK, now this project is starting to take off in the right direction. Now, I can get serious about what I have planned for this project.
 All my plans for this project are listed here. Whether-or-not I choose to implement each & every item in this list is at my discretion & necessity will take priority.
- * Locomotive Details - The meat of the sandwich.
-   I am starting things off with the GM-EMD SD40, where I will add as much detail to this body blank as I possibly can, using the resources I have available on hand.
-   I have picked the SD40 as the first locomotive, because there is already an abundance of information about it online & plenty of photographs I can use as references. If I am unable to source any information about a given locomotive or the information that is available is next-to-nothing, I will not add it to this script.
- * RattleCan 2 Integration.
-   RattleCan 2 comes with RLC Platinum Gamma, so if you've already got RLC, chances are you already have RattleCan - It's in Monkatraz's folder under "Magspack2".
-   Anyways, rather than wiring RattleCan directly to your locomotive base, what you will do is, you wire RattleCan's "Base" input to the Main E2's "Base" output.
-   In a couple of future updates a.) This will be implmented; & b.) I will have figured out a way to automate this wiring process - So, you won't need to worry about it.
- * RLC Platinum Gamma Integration.
-   The aim here, is to have this script replace the Advanced Entity Marker, the Pod Controller & RLC's Control Stand E2 script; & have the appropriate control stand/desktop/console appear in the locomotive's cabin (along with all necessary details), based on what locomotive you have attached this script's E2 to.
- * WireLink.
-   This simplifies things, by reducing the amount of Inputs & Outputs you need to wire... if you need to do any wiring at all. By the way my project is going, you shouldn't need to do any wiring at all, as all the necessities will be automatically done for you.
+ * Locomotive Details.
+ * Compatibility with Metalodon's RattleCan 2.
+ * Compatibility with Magnum MacKivler's RLC Platinum Gamma 2.
+ * Simplified I/O structures - enables "plug & play" capabilities.
 
 ## Errata:
  What's an Alpha/Early Access release without bugs?

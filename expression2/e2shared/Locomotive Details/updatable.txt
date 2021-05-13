@@ -2,17 +2,15 @@
 @inputs
 @outputs Base:entity # Wire this to RattleCan's "Base" output.
 @persist DevData:table
-@persist [ E O ]:entity [ LocomotiveBody FrontBogey RearBogey ]:entity [ BogeyComponents ]:table [ BogeyMaterial ]:string [ BogeyColor ]:vector4
-@persist [ H ]:number [ HoloEntity ]:entity
+@persist [ E O ]:entity [ LocomotiveBody FrontBogey RearBogey EngineerSeat ]:entity [ BogeyComponents ]:table [ LocomotiveBodyModel ]:string
+@persist [ LocomotiveBodyData ]:table
+@persist [ H Tick ]:number [ HoloEntity ]:entity [ CE ]:array
 @autoupdate
 
 function void appRun() {
 
     #[ Application init. ]#
     if ( first() ) {
-
-        BogeyColor = vec4( 255 )
-        BogeyMaterial = "models/proppertextures/enamel_cast_black"
 
         function void appAssert( Condition, Message:string ) {
 
@@ -48,82 +46,292 @@ function void appRun() {
 
         # The parented entity should be the locomotive's body.
         LocomotiveBody = E:parent()
+        LocomotiveBodyModel = LocomotiveBody:model()
+
+        appAssert( LocomotiveBodyModel != "", "Invalid model." )
+
+        switch( LocomotiveBodyModel ) {
+
+            case "models/gsgtrainprops/trains/propper/emd_sd40.mdl",
+                LocomotiveBodyData[ "Bogey Model",                  string  ] = "models/magtrains/locobogey3.mdl"
+                LocomotiveBodyData[ "Front Bogey Position",         vector  ] = LocomotiveBody:toWorld( vec( -240, 0, -1.0 ) )
+                LocomotiveBodyData[ "Front Bogey Angle",            angle   ] = LocomotiveBody:toWorld( ang( 0, 270, 0 ) )
+                LocomotiveBodyData[ "Front Bogey Axis Offset",      vector  ] = vec( 0, 0, 10 )
+                LocomotiveBodyData[ "Rear Bogey Position",          vector  ] = LocomotiveBody:toWorld( vec( 240, 0, -1.0 ) )
+                LocomotiveBodyData[ "Rear Bogey Angle",             angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
+                LocomotiveBodyData[ "Rear Bogey Axis Offset",       vector  ] = vec( 0, 0, 10 )
+                LocomotiveBodyData[ "Engineer's Seat Model",        string  ] = "models/magtrainslocos/cabseats/cabseat_emd.mdl"
+                LocomotiveBodyData[ "Engineer's Seat Position",     vector  ] = LocomotiveBody:toWorld( vec( -( LocomotiveBody:boxMax():x() - 185 ), LocomotiveBody:boxMax():y() - 14, 46 ) )
+                LocomotiveBodyData[ "Engineer's Seat Angle",        angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
+               #printColor( vec( 255, 200, 0 ), "[WARNING]", vec( 255 ), ": This PHX Gauge model is deprecated." )
+                break
+
+            default,
+                appAssert( 0, "Incompatible model." )
+                break
+
+        }
 
         # Run this script when the E2 gets deleted. This will clean up any resources that were allocated by this script.
         runOnLast( 1 )
-
-        #[ Automatic Bogey Spawning. ]#
-        local CE = LocomotiveBody:getConnectedEntities( "axis" )
-
-        # Remove the locomotive's body from the list of constrained entities.
-        if ( CE[ 1, entity ]:model() == LocomotiveBody:model() ) {
-
-            CE:remove( 1 )
-
-        }
-
-        # No front bogey exists.
-        if ( !CE[ 1, entity ] ) {
-
-            # Spawn in the front bogey & apply constraint data to it.
-            FrontBogey = propSpawn( "models/magtrains/locobogey3.mdl", LocomotiveBody:toWorld( vec( -240, 0, -1.0 ) ), LocomotiveBody:toWorld( ang( 0, 270, 0 ) ), 1 )
-            axis( FrontBogey, FrontBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( FrontBogey:massCenter() + vec( 0, 0, 10 ) ) )
-            noCollide( FrontBogey, LocomotiveBody )
-            FrontBogey:propPhysicalMaterial( "friction_00" )
-
-        }
-
-        # Front Bogey already exists.
-        else {
-
-            # Initialize.
-            FrontBogey = CE[ 1, entity ]
-
-        }
-
-        # No rear bogey exists.
-        if ( !CE[ 2, entity ] ) {
-
-            # Spawn in the rear bogey & apply constraint data to it.
-            RearBogey = propSpawn( "models/magtrains/locobogey3.mdl", LocomotiveBody:toWorld( vec( 240, 0, -1.0 ) ), LocomotiveBody:toWorld( ang( 0, 90, 0 ) ), 1 )
-            axis( RearBogey, RearBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( RearBogey:massCenter() + vec( 0, 0, 10 ) ) )
-            noCollide( RearBogey, LocomotiveBody )
-            RearBogey:propPhysicalMaterial( "friction_00" )
-
-        }
-
-        # Rear bogey already exists.
-        else {
-
-            # Initialize.
-            RearBogey = CE[ 2, entity ]
-
-        }
-
-        # Automatically enable the 'wire_holograms_modelany' convar, if it's been previously disabled.
-        if( holoModelAny() == 0 ) {
-
-            # Assert if the convar has been white-listed.
-            appAssert( concmd( "wire_holograms_modelany 1" ), "Holograms are disabled on this server." )
-
-        }
-
-        # Tick Clock is used to spawn holograms.
         runOnTick( 1 )
 
     }
 
-    #[ Hologram Spawn Handler. ]#
+    #[ Spawn Handler. ]#
     if( tickClk() ) {
 
+        # Watchdog for redundancy - IE Catching runaway code.
+        timer( "watchdog", 5000 )
+
+        # Task manager.
+        switch( Tick ) {
+
+            # Convars.
+            case 0,
+
+                # Automatically enable the 'wire_holograms_modelany' convar, if it's been previously disabled.
+                if( holoModelAny() == 0 ) {
+
+                    # Assert if the convar has been white-listed.
+                    appAssert( concmd( "wire_holograms_modelany 1" ), "Holograms are disabled on this server." )
+
+                }
+
+                # Step to the next task.
+                Tick++
+                stoptimer( "watchdog" )
+                break
+
+            # Automatic detection of connected entities.
+            case 1,
+
+                # Scan for connected entities.
+                CE = LocomotiveBody:getConnectedEntities( array( "axis" ) )
+
+                # Remove the locomotive body from the list.
+                if( CE[ 1, entity ]:model() == LocomotiveBodyModel ) {
+
+                    CE:remove( 1 )
+
+                }
+
+                #Step to the next task.
+                Tick++
+                stoptimer( "watchdog" )
+                break
+
+            # Front bogey spawner.
+            case 2,
+
+                # No front bogey exista.
+                if( !CE[ 1, entity ] ) {
+
+                    # Safety buffer.
+                    if( !propCanCreate() ) { exit() }
+
+                    # Spawn in the front bogey & apply constraint data to it.
+                    FrontBogey = propSpawn( LocomotiveBodyData[ "Bogey Model", string ], LocomotiveBodyData[ "Front Bogey Position", vector ], LocomotiveBodyData[ "Front Bogey Angle", angle ], 1 )
+                    axis( FrontBogey, FrontBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( FrontBogey:massCenter() + LocomotiveBodyData[ "Front Bogey Axis Offset", vector ] ) )
+                    noCollide( FrontBogey, LocomotiveBody )
+                    FrontBogey:propPhysicalMaterial( "friction_00" )
+
+                    # Step to the next task.
+                    Tick++
+                    stoptimer( "watchdog" )
+
+                }
+
+                # Front bogey exists.
+                else {
+
+                    # Front bogey is incorrect.
+                    if( CE[ 1, entity ]:model() != LocomotiveBodyData[ "Bogey Model", string ] ) {
+
+                        # Safety buffer.
+                        if( !propCanCreate() ) { exit() }
+
+                        # Yeetus deleetus! Filthy fucking bogey, yuck!
+                        CE[ 1, entity ]:propDelete()
+
+                        # Respawn, bitch!
+                        FrontBogey = propSpawn( LocomotiveBodyData[ "Bogey Model", string ], LocomotiveBodyData[ "Front Bogey Position", vector ], LocomotiveBodyData[ "Front Bogey Angle", angle ], 1 )
+                        axis( FrontBogey, FrontBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( FrontBogey:massCenter() + LocomotiveBodyData[ "Front Bogey Axis Offset", vector ] ) )
+                        noCollide( FrontBogey, LocomotiveBody )
+                        FrontBogey:propPhysicalMaterial( "friction_00" )
+
+                        # Step to the next task.
+                        Tick++
+                        stoptimer( "watchdog" )
+
+                    }
+
+                    # Front bogey is correct.
+                    else {
+
+                        # Initialize.
+                        FrontBogey = CE[ 1, entity ]
+
+                        # Step to the next task.
+                        Tick++
+                        stoptimer( "watchdog" )
+
+                    }
+                }
+                break
+
+            # Rear bogey spawner.
+            case 3,
+
+                # No rear bogey exista.
+                if( !CE[ 2, entity ] ) {
+
+                    # Safety buffer.
+                    if( !propCanCreate() ) { exit() }
+
+                    # Spawn in the front bogey & apply constraint data to it.
+                    RearBogey = propSpawn( LocomotiveBodyData[ "Bogey Model", string ], LocomotiveBodyData[ "Rear Bogey Position", vector ], LocomotiveBodyData[ "Rear Bogey Angle", angle ], 1 )
+                    axis( RearBogey, RearBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( RearBogey:massCenter() + LocomotiveBodyData[ "Rear Bogey Axis Offset", vector ] ) )
+                    noCollide( RearBogey, LocomotiveBody )
+                    RearBogey:propPhysicalMaterial( "friction_00" )
+
+                    # Step to the next task.
+                    Tick++
+                    stoptimer( "watchdog" )
+
+                }
+
+                # Rear bogey exists.
+                else {
+
+                    # Rear bogey is incorrect.
+                    if( CE[ 2, entity ]:model() != LocomotiveBodyData[ "Bogey Model", string ] ) {
+
+                        # Safety buffer.
+                        if( !propCanCreate() ) { exit() }
+
+                        # Yeetus deleetus! Filthy fucking bogey, yuck!
+                        CE[ 2, entity ]:propDelete()
+
+                        # Respawn, bitch!
+                        RearBogey = propSpawn( LocomotiveBodyData[ "Bogey Model", string ], LocomotiveBodyData[ "Rear Bogey Position", vector ], LocomotiveBodyData[ "Rear Bogey Angle", angle ], 1 )
+                        axis( RearBogey, RearBogey:massCenterL(), LocomotiveBody, LocomotiveBody:toLocal( RearBogey:massCenter() + LocomotiveBodyData[ "Rear Bogey Axis Offset", vector ] ) )
+                        noCollide( RearBogey, LocomotiveBody )
+                        RearBogey:propPhysicalMaterial( "friction_00" )
+
+                        # Step to the next task.
+                        Tick++
+                        stoptimer( "watchdog" )
+
+                    }
+
+                    # Rear bogey is correct.
+                    else {
+
+                        # Initialize.
+                        RearBogey = CE[ 2, entity ]
+
+                        # Step to the next task.
+                        Tick++
+                        stoptimer( "watchdog" )
+
+                    }
+                }
+                break
+
+            case 4,
+
+                # Safety third!
+                if( !propCanCreate() ) { exit() }
+
+                # Scan for a Parenting Gate.
+                C = LocomotiveBody:children()
+                for( I = 1, C:count() ) {
+
+                    # Parenting Gate exists.
+                    if( C[ I, entity ]:type() == "gmod_wire_gate" ) {
+
+                        # Get Engineer's Seat.
+                        EngineerSeat = C[ I, entity ]:children()[ 1, entity ]
+
+                        # Uncomment these, to adjust the seat position.
+                       #EngineerSeat:propDelete()
+                       #EngineerSeat = noentity()
+
+                        # No Engineer's Seat Exists.
+                        if( !EngineerSeat ) {
+
+                            # Spawn in an Engineer's Seat.
+                            EngineerSeat = seatSpawn(
+                                LocomotiveBodyData[ "Engineer's Seat Model", string ],
+                                LocomotiveBodyData[ "Engineer's Seat Position", vector ],
+                                LocomotiveBodyData[ "Engineer's Seat Angle", angle ],
+                                1
+                            )
+                            EngineerSeat:parentTo( C[ I, entity ] )
+
+                            #Step to the next task.
+                            Tick++
+                            stoptimer( "watchdog" )
+                            break
+
+                        }
+
+                        # Engineer's Seat exists.
+                        else {
+
+                            # Engineer's Seat is incorrect.
+                            if( EngineerSeat:model() != LocomotiveBodyData[ "Engineer's Seat Model", string ] ) {
+
+                                # Yeetus deletus!
+                                EngineerSeat:propDelete()
+
+                                # Respawn, bitch!
+                                EngineerSeat = seatSpawn(
+                                    LocomotiveBodyData[ "Engineer's Seat Model", string ],
+                                    LocomotiveBodyData[ "Engineer's Seat Position", vector ],
+                                    LocomotiveBodyData[ "Engineer's Seat Angle", angle ],
+                                    1
+                                )
+                                EngineerSeat:parentTo( C[ I, entity ] )
+
+                                #Step to the next task.
+                                Tick++
+                                stoptimer( "watchdog" )
+                                break
+
+                            }
+
+                            # Engineer's Seat is correct.
+                            else {
+
+                                #Step to the next task.
+                                Tick++
+                                stoptimer( "watchdog" )
+                                break
+
+                            }
+                        }
+                    }
+                }
+                break
+
+            # Tasks complete.
+            default,
+                runOnTick( 0 )
+                stoptimer( "watchdog" )
+                break
+
+        }
+
         #[ Assert when the hologram spawn limit has been reached. ]#
-        appAssert( holoAmount() < holoMaxAmount(), "Hologram spawn limit reached." )
+      #[appAssert( holoAmount() < holoMaxAmount(), "Hologram spawn limit reached." )
 
         # This provides a safety buffer between bursts of holograms being spawned.
-        if( !holoCanCreate() || !holoModelAny() ) { exit() }
+        if( !holoCanCreate() || !holoModelAny() ) { exit() }]#
 
         #[ Cue hologram madness... ]#
-        H++
+      #[H++
         HoloEntity = noentity()
         local Parent = noentity()
         local HoloFinished = 0
@@ -1213,9 +1421,12 @@ function void appRun() {
 
         # Sanity checks.
         if( !HoloEntity ) { appAssert( HoloFinished, "Failed to spawn hologram, or no hologram exists at index " + H + "." ) }
-        appAssert( HoloEntity:model() != "models/holograms/cube.mdl", "Hologram model not found at index " + H + "." )
+        appAssert( HoloEntity:model() != "models/holograms/cube.mdl", "Hologram model not found at index " + H + "." ) ]#
 
     }
+
+    #[ Watchdog Handler. ]#
+    if( clk( "watchdog" ) ) { appAssert( 0, "Watchdog timed out." ) }
 
     #[ Resource Cleanup. ]#
     if ( removing() ) {
@@ -1225,6 +1436,7 @@ function void appRun() {
         # Delete previously spawned entities.
         FrontBogey:propDelete()
         RearBogey:propDelete()
+        EngineerSeat:propDelete()
 
     }
 }
@@ -1232,5 +1444,5 @@ function void appRun() {
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string ] = "0.3.0" }
+                          DevData[ "App Version", string ] = "0.4.0" }
 #[ End of Developer's Data. ]#
