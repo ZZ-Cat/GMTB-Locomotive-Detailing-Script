@@ -23,27 +23,9 @@ I need to think of a better name for this project. Until I do, you're stuck with
 OK, now this project is starting to take off in the right direction. Now, I can get serious about what I have planned for this project.
 All my plans for this project are listed here. Whether-or-not I choose to implement each & every item in this list is at my discretion & necessity will take priority.
  * Locomotive Details.
- * Compatibility with Metalodon's RattleCan 2.
+ * Compatibility with Monkatraz's RattleCan 2.
  * Compatibility with Magnum MacKivler's RLC Platinum Gamma 2.
  * Simplified I/O structures - enables "plug & play" capabilities.
-
-## Errata:
- What's an Alpha/Early Access release without bugs?
- I'll tell ya what:
- I am the only developer that's working on everything that is in my GitHub repositories. This gives me the luxury of having absolute control over the level of quality that goes into my coding & script work, at the expense of updates taking longer to be pushed out - coupled with the fact that I don't have internet access on most days.
- With that being said, as much as I strive to avoid it, even my own work isn't entirely 100% immune from pestilence.
-
- Currently, as of Kernel Version 0.1.5, I am having some issues with the Automatic Updates plugin falsely flagging license violations.
- So, I have temporarily disabled that feature until I have fixed it proper-like.
- There is also the slight chance of the CRC (Cyclic Redundancy Checksum) falsely flagging a corrupted App download. I have left this intact, because a.) It's a semi-rare occurrence; b.) Whenever I update the App, I sometimes forget to update the CRC in the 'VERSION.txt' file while I'm at it. This has a tendency to corrupt App downloads anyways; & c.) I'm still working on the script work for the Automatic Updates plugin. So, expect varying degrees of stability here.
- This IS an "Alpha/Early Access" status project, after all.
-
- You will also note the only detail that's been added to the SD40 so far (as of App Version 0.2.0), is in the bogeys.
- This will give you an idea of the level of detail that is going into this project, & as time marches forward, more detail will be added to the rest of this locomotive (& other locomotives) in future updates.
-
- That's about it for what I've encountered as far as bugs/glitches/errata is concerned.
- However, if ya notice something a outta kilter, consider opening an issue in this repository about it. Also, provide details about what you did to encounter the bug, so I can trace your steps & reproduce it on my end.
- 'Cause my information is only as good as the resources that are available to me.
 
 ## Requirements:
  * An active internet connection.
