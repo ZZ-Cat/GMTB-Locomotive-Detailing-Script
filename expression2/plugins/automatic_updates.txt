@@ -81,15 +81,6 @@ function void autoUpdateRun() {
                     local LocalUpdatableName = AutoUpdateConfig[ "App Name", string ]
                     local LocalUpdatableVersion = AutoUpdateConfig[ "App Version", string ]
 
-                    #[ TEMPORARILY DISABLED, PENDING DEBUGGING!
-                    if ( LocalMainAuthor != ServerMainAuthor || LocalUpdatableAuthor != ServerUpdatableAuthor ) {
-
-                        printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": You are violating the software license of this E2 script." )
-                        selfDestruct()
-
-                    }
-
-                    else]#
                     if ( ServerMainVersion != LocalMainVersion ) {
 
                         local LocalMainVersionMajor = LocalMainVersion:explode( "." )[ 1, string ]:toNumber()
@@ -101,14 +92,18 @@ function void autoUpdateRun() {
                         local ServerMainVersionPatch = ServerMainVersion:explode( "." )[ 3, string ]:toNumber()
 
                         # New version of the main script is available.
-                        if ( ServerMainVersionMajor > LocalMainVersionMajor || ServerMainVersionMinor > LocalMainVersionMinor || ServerMainVersionPatch > LocalMainVersionPatch ) {
+                        if ( ( ServerMainVersionMajor == LocalMainVersionMajor && ServerMainVersionMinor == LocalMainVersionMinor && ServerMainVersionPatch > LocalMainVersionPatch ) ||
+                            ( ServerMainVersionMajor == LocalMainVersionMajor && ServerMainVersionMinor > LocalMainVersionMinor ) ||
+                            ( ServerMainVersionMajor > LocalMainVersionMajor ) ) {
 
                             printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": A new version of the Locomotive Detailing Script is available." )
 
                         }
 
                         # Local version is newer than what's on GitHub. Is this a developer's edition?
-                        elseif ( ServerMainVersionMajor < LocalMainVersionMajor || ServerMainVersionMinor < LocalMainVersionMinor || ServerMainVersionPatch < LocalMainVersionPatch ) {
+                        elseif ( ( ServerMainVersionMajor == LocalMainVersionMajor && ServerMainVersionMinor == LocalMainVersionMinor && ServerMainVersionPatch < LocalMainVersionPatch ) ||
+                            ( ServerMainVersionMajor == LocalMainVersionMajor && ServerMainVersionMinor < LocalMainVersionMinor ) ||
+                            ( ServerMainVersionMajor < LocalMainVersionMajor ) ) {
 
                             # Message to the original owner of this E2 Script
                             if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
@@ -138,8 +133,11 @@ function void autoUpdateRun() {
                         local ServerUpdatableVersionPatch = ServerUpdatableVersion:explode( "." )[ 3, string ]:toNumber()
 
                         # New version of the updatable script is available.
-                        if ( ServerUpdatableVersionMajor > LocalUpdatableVersionMajor || ServerUpdatableVersionMinor > LocalUpdatableVersionMinor || ServerUpdatableVersionPatch > LocalUpdatableVersionPatch ) {
+                        if( ( ServerUpdatableVersionMajor == LocalUpdatableVersionMajor && ServerUpdatableVersionMinor == LocalUpdatableVersionMinor && ServerUpdatableVersionPatch > LocalUpdatableVersionPatch ) ||
+                            ( ServerUpdatableVersionMajor == LocalUpdatableVersionMajor && ServerUpdatableVersionMinor > LocalUpdatableVersionMinor ) ||
+                            ( ServerUpdatableVersionMajor > LocalUpdatableVersionMajor ) ) {
 
+                            # Download updates...
                             printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Downloading updates. Please wait..." )
                             PrivateURLHandle = PrivateE2UpdateServerURL
                             timer( "Private Request From URL", 100 )
@@ -147,22 +145,18 @@ function void autoUpdateRun() {
                         }
 
                         # Local version is newer than what's on GitHub. Is this a developer's edition?
-                        elseif ( ServerUpdatableVersionMajor < LocalUpdatableVersionMajor || ServerUpdatableVersionMinor < LocalUpdatableVersionMinor || ServerUpdatableVersionPatch < LocalUpdatableVersionPatch ) {
+                        elseif( ( ServerUpdatableVersionMajor == LocalUpdatableVersionMajor && ServerUpdatableVersionMinor == LocalUpdatableVersionMinor && ServerUpdatableVersionPatch < LocalUpdatableVersionPatch ) ||
+                                ( ServerUpdatableVersionMajor == LocalUpdatableVersionMajor && ServerUpdatableVersionMinor < LocalUpdatableVersionMinor ) ||
+                                ( ServerUpdatableVersionMajor < LocalUpdatableVersionMajor ) ) {
 
                             # Message to the original owner of this E2 Script
                             if ( owner():name() == "ZZ Cat [CFH] [FC&N]" ) {
-
                                 printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Cassandra, don't forget to update the App on GitHub." )
                                #printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash() )
-
                             }
 
                             # Message to contributors.
-                            else {
-
-                                printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Want to contribute? Consider submitting a Pull Request." )
-
-                            }
+                            else { printColor( vec( 0, 100, 200 ), "[NOTICE]", vec( 255 ), ": Want to contribute? Consider submitting a Pull Request." ) }
                         }
                     }
                     break
@@ -186,7 +180,7 @@ function void autoUpdateRun() {
                             printColor( vec( 255 ), "Here is your hash key for VERSION.txt: " + hash( Buffer ) )
 
                         }
-                        
+
                         else {
 
                             printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Updates discarded. The source files were corrupt." )

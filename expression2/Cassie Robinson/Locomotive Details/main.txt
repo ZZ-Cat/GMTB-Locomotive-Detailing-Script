@@ -27,7 +27,7 @@ if ( first() || duped() ) {
 
     AutoUpdateConfig[ "Kernel Author", string ] = "Cassie Robinson"
     AutoUpdateConfig[ "Kernel Name", string ] = "Locomotive Details-Main"
-    AutoUpdateConfig[ "Kernel Version", string ] = "1.0.0"
+    AutoUpdateConfig[ "Kernel Version", string ] = "1.0.1"
     #[ End of Developer's Data. ]#
 
     E = entity()
