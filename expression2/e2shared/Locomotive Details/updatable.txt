@@ -12,17 +12,135 @@ function void appRun() {
     #[ Application init. ]#
     if ( first() ) {
 
+        function void printError( Type:string, Message:string ) {
+            Type = Type:lower()
+            switch( Type ) {
+                case "alert",
+                    printColor( vec( 255, 220, 0 ), "[ALERT]", vec( 255 ), ": " + Message )
+                    break
+                case "assert",
+                    printColor( vec( 255, 0, 0 ), "[ASSERT]", vec( 255 ), ": " + Message )
+                    break
+                case "error",
+                    printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": " + Message )
+                    break
+                case "info",
+                    printColor( vec( 0, 255, 0 ), "[INFO]", vec( 255 ), ": " + Message )
+                    break
+                case "notice",
+                    printColor( vec( 0, 180, 255 ), "[NOTICE]", vec( 255 ), ": " + Message )
+                    break
+                default,
+                    printColor( vec( 255, 0, 0 ), "[ERROR]", vec( 255 ), ": Invalid message category." )
+                    break
+            }
+        }
+
         function void appAssert( Condition, Message:string ) {
 
             if( Condition == 0 ) {
 
                 stopAllTimers()
                 runOnTick( 0 )
-                printColor( vec( 255, 0, 0 ), "[ASSERT]", vec( 255 ), ": " + Message )
+                printError( "assert", Message )
                 exit()
 
             }
         }
+
+        function void assertAll( Condition, Message:string ) {
+            if( Condition == 0 ) {
+                CE = entity():getConnectedEntities( array( "parent", "weld", "axis", "adv_ballsocket", "rope" ) )
+                for( I = 1, CE:count() ) {
+                    CE[ I, entity ]:propNotSolid( 1 )
+                    CE[ I, entity ]:propShadow( 0 )
+                }
+            }
+            appAssert( Condition, Message )
+        }
+
+        #[ Map Compatibility. ]#
+        local MapIsCompatible = 0
+        local MapHasPhxTracks = 0
+        local Maps = table()
+        Maps[ "JTP Maps", array ] = array(
+            "gm_iron_siege",
+            "gm_promontory",
+            "jtp_deadloop",
+            "jtp_testtrak"
+        )
+        Maps[ "TP1 Maps", array ] = array(
+            "gm_sunsetgulch_old",
+            "gm_sunsetgulch_older",
+            "gm_sunsetgulch_oldest",
+            "gm_trainset",
+            "gm_trainset_snowy"
+        )
+        Maps[ "TP2 Maps", array ] = array(
+            "gm_aoh_rr",
+           #"gm_aoh_rr_mystictrailedition",
+            "gm_aoh_rr_night",
+            "gm_aoh_rr_v2",
+            "gm_connvalley",
+            "gm_grande_valley",
+            "gm_hb_terminal",
+            "gm_henrysburg_v2",
+            "gm_northeast_corridor",
+            "gm_rocksiderails_trakpak2",
+            "gm_sunsetgulch",
+            "gm_sunsetgulch_night",
+            "gm_testtrak",
+            "gm_traincity_v2",
+            "gm_traincity_v2_night",
+            "gm_traincity_v2_rain"
+        )
+        Maps[ "TP3 Maps", array ] = array(
+            "gm_humpyard_alphatest_01_day",
+            "gm_humpyard_alphatest_01_night",
+            "gm_promontory_loop",
+            "gm_riceharbor",
+            "gm_rocksiderails_trakpak3",
+            "gmtb_royhill_summit",
+            "trakpak3_testbed"
+        )
+        if( !MapIsCompatible ) {
+            for( I = 1, Maps[ "JTP Maps", array ]:count() ) {
+                if( map() == Maps[ "JTP Maps", array ][ I, string ] ) {
+                    MapIsCompatible = 1
+                    MapHasPhxTracks = 0
+                    break
+                }
+            }
+        }
+        if( !MapIsCompatible ) {
+            for( I = 1, Maps[ "TP1 Maps", array ]:count() ) {
+                if( map() == Maps[ "TP1 Maps", array ][ I, string ] ) {
+                    MapIsCompatible = 1
+                    MapHasPhxTracks = 1
+                    printError( "alert", "Expect derailments & stability issues on this map. Drive at your own risk." )
+                    break
+                }
+            }
+        }
+        if( !MapIsCompatible ) {
+            for( I = 1, Maps[ "TP2 Maps", array ]:count() ) {
+                if( map() == Maps[ "TP2 Maps", array ][ I, string ] ) {
+                    MapIsCompatible = 1
+                    MapHasPhxTracks = 1
+                    break
+                }
+            }
+        }
+        if( !MapIsCompatible ) {
+            for( I = 1, Maps[ "TP3 Maps", array ]:count() ) {
+                if( map() == Maps[ "TP3 Maps", array ][ I, string ] ) {
+                    MapIsCompatible = 1
+                    MapHasPhxTracks = 0
+                    break
+                }
+            }
+        }
+        assertAll( MapIsCompatible, "Incompatible Map." )
 
         # Entity Data.
         E = entity()
@@ -50,26 +168,55 @@ function void appRun() {
 
         appAssert( LocomotiveBodyModel != "", "Invalid model." )
 
-        switch( LocomotiveBodyModel ) {
+        local ModelPathArray = LocomotiveBodyModel:explode( "/" )
 
-            case "models/gsgtrainprops/trains/propper/emd_sd40.mdl",
-                LocomotiveBodyData[ "Bogey Model",                  string  ] = "models/magtrains/locobogey3.mdl"
-                LocomotiveBodyData[ "Front Bogey Position",         vector  ] = LocomotiveBody:toWorld( vec( -240, 0, -1.0 ) )
-                LocomotiveBodyData[ "Front Bogey Angle",            angle   ] = LocomotiveBody:toWorld( ang( 0, 270, 0 ) )
-                LocomotiveBodyData[ "Front Bogey Axis Offset",      vector  ] = vec( 0, 0, 10 )
-                LocomotiveBodyData[ "Rear Bogey Position",          vector  ] = LocomotiveBody:toWorld( vec( 240, 0, -1.0 ) )
-                LocomotiveBodyData[ "Rear Bogey Angle",             angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
-                LocomotiveBodyData[ "Rear Bogey Axis Offset",       vector  ] = vec( 0, 0, 10 )
-                LocomotiveBodyData[ "Engineer's Seat Model",        string  ] = "models/magtrainslocos/cabseats/cabseat_emd.mdl"
-                LocomotiveBodyData[ "Engineer's Seat Position",     vector  ] = LocomotiveBody:toWorld( vec( -( LocomotiveBody:boxMax():x() - 185 ), LocomotiveBody:boxMax():y() - 14, 46 ) )
-                LocomotiveBodyData[ "Engineer's Seat Angle",        angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
-               #printColor( vec( 255, 200, 0 ), "[WARNING]", vec( 255 ), ": This PHX Gauge model is deprecated." )
-                break
+        if( ModelPathArray[ 1, string ] == "models" ) {
 
-            default,
-                appAssert( 0, "Incompatible model." )
-                break
+            switch( ModelPathArray[ 2, string ] ) {
 
+                case "gsgtrainprops",
+                    if( ModelPathArray[ 3, string ] == "trains" && ModelPathArray[ 4, string ] == "propper" ) {
+                        switch( ModelPathArray[ 5, string ]:explode( "." )[ 1, string ] ) {
+
+                            case "emd_f40ph",
+                               #appAssert( 0, "Program terminated." )
+                                LocomotiveBodyData[ "Bogey Model",                  string  ] = MapHasPhxTracks == 1 ? "models/magtrainslocos/trucks/blomberg_m_phx.mdl" : "models/magtrainslocos/trucks/blomberg_m_rsg.mdl"
+                                LocomotiveBodyData[ "Front Bogey Position",         vector  ] = LocomotiveBody:toWorld( vec( -198, 0, 2.0 ) )
+                                LocomotiveBodyData[ "Front Bogey Angle",            angle   ] = LocomotiveBody:toWorld( ang( 0, 270, 0 ) )
+                                LocomotiveBodyData[ "Front Bogey Axis Offset",      vector  ] = vec( 0, 0, 10 )
+                                LocomotiveBodyData[ "Rear Bogey Position",          vector  ] = LocomotiveBody:toWorld( vec( 198, 0, 2.0 ) )
+                                LocomotiveBodyData[ "Rear Bogey Angle",             angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
+                                LocomotiveBodyData[ "Rear Bogey Axis Offset",       vector  ] = vec( 0, 0, 10 )
+                                LocomotiveBodyData[ "Engineer's Seat Model",        string  ] = "models/magtrainslocos/cabseats/cabseat_emd.mdl"
+                                LocomotiveBodyData[ "Engineer's Seat Position",     vector  ] = LocomotiveBody:toWorld( vec( -( LocomotiveBody:boxMax():x() - 116 ), LocomotiveBody:boxMax():y() - 20, 48.5 ) )
+                                LocomotiveBodyData[ "Engineer's Seat Angle",        angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
+                                break
+
+                            case "emd_sd40",
+                                assertAll( MapHasPhxTracks, "Locomotive has PHX bogeys." )
+                                LocomotiveBodyData[ "Bogey Model",                  string  ] = "models/magtrains/locobogey3.mdl"
+                                LocomotiveBodyData[ "Front Bogey Position",         vector  ] = LocomotiveBody:toWorld( vec( -240, 0, -1.0 ) )
+                                LocomotiveBodyData[ "Front Bogey Angle",            angle   ] = LocomotiveBody:toWorld( ang( 0, 270, 0 ) )
+                                LocomotiveBodyData[ "Front Bogey Axis Offset",      vector  ] = vec( 0, 0, 10 )
+                                LocomotiveBodyData[ "Rear Bogey Position",          vector  ] = LocomotiveBody:toWorld( vec( 240, 0, -1.0 ) )
+                                LocomotiveBodyData[ "Rear Bogey Angle",             angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
+                                LocomotiveBodyData[ "Rear Bogey Axis Offset",       vector  ] = vec( 0, 0, 10 )
+                                LocomotiveBodyData[ "Engineer's Seat Model",        string  ] = "models/magtrainslocos/cabseats/cabseat_emd.mdl"
+                                LocomotiveBodyData[ "Engineer's Seat Position",     vector  ] = LocomotiveBody:toWorld( vec( -( LocomotiveBody:boxMax():x() - 185 ), LocomotiveBody:boxMax():y() - 14, 46 ) )
+                                LocomotiveBodyData[ "Engineer's Seat Angle",        angle   ] = LocomotiveBody:toWorld( ang( 0, 90, 0 ) )
+                                break
+
+                            default,
+                                break
+                        }
+                    }
+                    break
+
+                default,
+                    print( "Hello, world." )
+                    break
+
+            }
         }
 
         # Run this script when the E2 gets deleted. This will clean up any resources that were allocated by this script.
@@ -344,5 +491,5 @@ function void appRun() {
 #[ Developer's Data. DO NOT CHANGE/DELETE/REMOVE! ]#
 function void appInit() { DevData[ "App Author", string ] = "Cassie Robinson"
                           DevData[ "App Name", string ] = "Locomotive Details-Updatable"
-                          DevData[ "App Version", string ] = "0.4.1" }
+                          DevData[ "App Version", string ] = "0.5.0" }
 #[ End of Developer's Data. ]#
